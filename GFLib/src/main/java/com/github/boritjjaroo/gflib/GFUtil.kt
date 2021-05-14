@@ -4,11 +4,11 @@ import java.nio.ByteBuffer
 
 class GFUtil {
     companion object {
-        fun byteBufferToHexString(buffer : ByteBuffer, count : Int) : String {
+
+        fun byteArrayToHexString(buffer : ByteArray, count : Int) : String {
             var result = ""
             var byteCount = 0
-            var buf = buffer.array()
-            for (b in buf) {
+            for (b in buffer) {
                 result += String.format("%02X ", b)
                 byteCount++
                 if (byteCount % 16 == 0)

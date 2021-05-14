@@ -1,14 +1,21 @@
 package com.github.boritjjaroo.gftoydroid
 
 import android.util.Log
+import com.github.boritjjaroo.gflib.GFUtil
 import com.github.megatronking.netbare.http.HttpBody
 import com.github.megatronking.netbare.http.HttpRequest
 import com.github.megatronking.netbare.http.HttpResponse
 import com.github.megatronking.netbare.http.HttpResponseHeaderPart
 import com.github.megatronking.netbare.injector.InjectorCallback
 import com.github.megatronking.netbare.injector.SimpleHttpInjector
+import org.apache.commons.httpclient.ChunkedInputStream
+import org.apache.commons.io.IOUtils
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.IOException
-import com.github.boritjjaroo.gflib.GFUtil
+import java.io.InputStream
+import java.nio.ByteBuffer
+import java.util.zip.GZIPInputStream
 
 class GFPacketInterceptor : SimpleHttpInjector() {
 
@@ -16,21 +23,25 @@ class GFPacketInterceptor : SimpleHttpInjector() {
         const val TAG = "Packet"
     }
 
+    private var responseHeader: HttpResponseHeaderPart? = null
+    private var responseBuffer: ByteArrayOutputStream? = null
+
+
+    override fun sniffRequest(request: HttpRequest): Boolean {
+        //if (request.host().canonicalHostName.equals("klanet.duckdns.org")) return false
+        //if (request.host().canonicalHostName.equals("gfkrcdn.17996cdn.net")) return false
+        return true
+    }
+
     override fun sniffResponse(response: HttpResponse): Boolean {
-        if (response.isHttps) return false
+        if (response.path().startsWith("/index.php"))
+            return true
         //if (response.host().canonicalHostName.equals("klanet.duckdns.org")) return false
         //if (response.host().canonicalHostName.equals("gfkrcdn.17996cdn.net")) return false
         //if (response.host().canonicalHostName.startsWith("sn-list")) {
         //    return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(R.string.high_quality_illustrations), false) && URL(response.url()).toURI().path.equals("/aNy0jv627jejqDIKgdldAlyQjnr7OExKF5k1daMC80I.txt")
         //}
-        return true
-    }
-
-    override fun sniffRequest(request: HttpRequest): Boolean {
-        if (request.isHttps) return false
-        //if (request.host().canonicalHostName.equals("klanet.duckdns.org")) return false
-        //if (request.host().canonicalHostName.equals("gfkrcdn.17996cdn.net")) return false
-        return true
+        return false
     }
 
     @Throws(IOException::class)
@@ -48,7 +59,8 @@ class GFPacketInterceptor : SimpleHttpInjector() {
     @Throws(IOException::class)
     override fun onResponseInject(header: HttpResponseHeaderPart, callback: InjectorCallback) {
         Log.i(TAG, "onResponseInject(header)")
-        //this.header = header
+        this.responseHeader = header
+        responseBuffer = ByteArrayOutputStream()
         Log.i(TAG, "Response Header : " + header.uri().toString())
         callback.onFinished(header)
     }
@@ -56,10 +68,58 @@ class GFPacketInterceptor : SimpleHttpInjector() {
     @Throws(IOException::class)
     override fun onResponseInject(httpResponse: HttpResponse, body: HttpBody, callback: InjectorCallback) {
         Log.i(TAG, "onResponseInject(body)")
-        callback.onFinished(body)
-        Log.i(TAG, "Data Size : " + body.toBuffer().capacity())
-        //Log.i(TAG, "Data (UTF8) \n" + GFUtil.byteBufferToUTF8(body.toBuffer()))
-        Log.i(TAG, "Data (Hex) \n" + GFUtil.byteBufferToHexString(body.toBuffer(), 256))
+
+        var isResponseBufferReady = false
+        var isChunked = false
+        var bodyByteArray = body.toBuffer().array()
+        responseBuffer!!.write(bodyByteArray)
+
+        if ("chunked" == responseHeader!!.header("Transfer-Encoding")) {
+            isChunked = true
+            if (String(bodyByteArray).endsWith("0\r\n\r\n")) {
+                isResponseBufferReady = true
+            }
+        }
+        else {
+            isResponseBufferReady = true
+        }
+
+        if (isResponseBufferReady) {
+            try {
+                var byteArrayInputStream = ByteArrayInputStream(responseBuffer!!.toByteArray())
+                var inputStream: InputStream? = null
+                if ("gzip" == responseHeader!!.header("Content-Encoding")) {
+                    if (isChunked) {
+                        inputStream = GZIPInputStream(ChunkedInputStream(byteArrayInputStream))
+                    }
+                    else {
+                        inputStream = GZIPInputStream(byteArrayInputStream)
+                    }
+                }
+                else {
+                    if (isChunked) {
+                        inputStream = ChunkedInputStream(byteArrayInputStream)
+                    }
+                    else {
+                        inputStream = byteArrayInputStream
+                    }
+                }
+
+                val reponseByteArray = IOUtils.toByteArray(inputStream)
+                inputStream.close()
+
+                Log.i(TAG, "Data Size : " + reponseByteArray.size)
+                var byteBuffer = ByteBuffer.allocate(reponseByteArray.size)
+                byteBuffer.put(reponseByteArray)
+                byteBuffer.rewind()
+                Log.i(TAG, "Data (UTF8) \n" + GFUtil.byteBufferToUTF8(byteBuffer))
+                Log.i(TAG, "Data (Hex) \n" + GFUtil.byteArrayToHexString(reponseByteArray, 1024))
+
+            } catch (e : Exception) {
+
+            }
+        }
+
 //        if ("chunked" != header!!.header("Transfer-Encoding") || "gzip" != header!!.header("Content-Encoding")) {
 //            Log.d("INDEX", String(body.toBuffer().array()))
 //            callback.onFinished(body)
@@ -137,5 +197,6 @@ class GFPacketInterceptor : SimpleHttpInjector() {
 //            }
 //
 //        }
+        callback.onFinished(body)
     }
 }
