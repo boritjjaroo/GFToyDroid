@@ -1,2 +1,5 @@
 rootProject.name = "GFToyDroid"
 include ':app'
+include ':netbare-core'
+include ':netbare-injector'
+include ':GFLib'
