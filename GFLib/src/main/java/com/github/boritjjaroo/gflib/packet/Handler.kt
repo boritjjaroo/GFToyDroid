@@ -10,7 +10,8 @@ object Handler {
     var defaultByteDataResponse: GfPacket = ByteDataResponse()
 
     var packets: Map<String,GfPacket> = mapOf(
-        GetUid.ID to GetUid()
+        GetUid.ID to GetUid(),
+        FriendVisitResponse.ID to FriendVisitResponse(),
     )
 
     fun sniffResponse(url: String) : Boolean {
@@ -29,20 +30,24 @@ object Handler {
         defaultRequestHandler.process(params)
     }
 
-    fun handleRespose(uriPath: String, packetData: ByteArray) {
+    fun handleRespose(uriPath: String, packetData: ByteArray) : ByteArray? {
         val (server, pathID) = parseUriPath(uriPath)
-        val packet = this.packets[pathID]
+        val packet: GfPacket? = this.packets[pathID]
+        val modifiedData : ByteArray?
+
         if (packet != null)
         {
-            packet.process(packetData)
+            modifiedData = packet.process(packetData)
         }
         else if (pathID == "Mission/drawEvent")
         {
-            this.defaultByteDataResponse.process(packetData)
+            modifiedData = this.defaultByteDataResponse.process(packetData)
         }
         else {
-            this.defaultResponseHandler.process(packetData)
+            modifiedData = this.defaultResponseHandler.process(packetData)
         }
+
+        return modifiedData
     }
 
     fun parseUriPath(uriPath: String) : Pair<String, String> {

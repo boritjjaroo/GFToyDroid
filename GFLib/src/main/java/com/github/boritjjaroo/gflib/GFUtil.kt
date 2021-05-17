@@ -27,14 +27,14 @@ class GFUtil {
             return cs.decode(ByteBuffer.wrap(byteArray)).toString()
         }
 
-        fun logI(tag: String, str: String) {
+        fun logV(tag: String, str: String) {
             val MAX_LEN = 2000 // 2000 bytes 마다 끊어서 출력
             val len = str.length
             var idx = 0
             var nextIdx = 0
             while (idx < len) {
                 nextIdx += MAX_LEN
-                Log.i(tag, str.substring(idx, if (nextIdx > len) len else nextIdx))
+                Log.v(tag, str.substring(idx, if (nextIdx > len) len else nextIdx))
                 idx = nextIdx
             }
         }

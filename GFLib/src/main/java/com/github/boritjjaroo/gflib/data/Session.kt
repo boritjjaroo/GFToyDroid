@@ -11,7 +11,7 @@ import java.io.*
 import java.util.*
 
 class Session {
-    var sign: String = "yundoudou"
+    var sign: Sign = Sign("yundoudou")
     var date: Date = Date()
 
     fun decryptGFData(gfData: ByteArray) : JsonObject {
@@ -36,7 +36,7 @@ class Session {
 
         try {
             val byteArrayInputStream = ByteArrayInputStream(gfDataPadded, startIndex, gfDataPadded.size - startIndex)
-            val inputStream = GfEncryptionInputStream(byteArrayInputStream, Sign(this.sign))
+            val inputStream = GfEncryptionInputStream(byteArrayInputStream, this.sign)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8))
             data = JsonParser.parseReader(bufferedReader) as JsonObject
             this.date = inputStream.date
@@ -45,8 +45,6 @@ class Session {
             Log.e(GFUtil.TAG, e.toString())
             Log.e(GFUtil.TAG, e.stackTraceToString())
         }
-
-        //Log.i(GFUtil.TAG, "Session::decryptGFData() new date : " + this.date.toString())
 
         return data
     }
@@ -73,7 +71,7 @@ class Session {
 
         try {
             val byteArrayInputStream = ByteArrayInputStream(gfDataPadded, startIndex, gfDataPadded.size - startIndex)
-            val inputStream = GfEncryptionInputStream(byteArrayInputStream, Sign(this.sign))
+            val inputStream = GfEncryptionInputStream(byteArrayInputStream, this.sign)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8))
             byteArray = inputStream.readBytes()
             inputStream.close()
@@ -82,8 +80,6 @@ class Session {
             Log.e(GFUtil.TAG, e.toString())
             Log.e(GFUtil.TAG, e.stackTraceToString())
         }
-
-        //Log.i(GFUtil.TAG, "Session::decryptGFData() new date : " + this.date.toString())
 
         return byteArray
     }
@@ -96,7 +92,7 @@ class Session {
         val writer = OutputStreamWriter(outputStream)
         writer.write(json.toString())
         writer.flush()
-        outputStream.finish(this.date, Sign(this.sign), compress)
+        outputStream.finish(this.date, this.sign, compress)
         outputStream.flush()
         val byteArray = byteArrayOutputStream.toByteArray()
         writer.close()
