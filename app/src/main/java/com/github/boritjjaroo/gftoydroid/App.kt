@@ -2,7 +2,6 @@ package com.github.boritjjaroo.gftoydroid
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import com.github.megatronking.netbare.NetBare
 import com.github.megatronking.netbare.NetBareUtils
 import com.github.megatronking.netbare.ssl.JKS
@@ -23,8 +22,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        Log.i(GFPacketInterceptor.TAG, "App:onCreate()")
 
         sInstance = this
         // 자체 서명 된 인증서 만들기

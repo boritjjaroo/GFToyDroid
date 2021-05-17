@@ -2,4 +2,5 @@
     <string name="app_name">GFToyDroid</string>
     <string name="start_vpn">Start VPN</string>
     <string name="stop_vpn">Stop VPN</string>
+    <string name="test">Test</string>
 </resources>

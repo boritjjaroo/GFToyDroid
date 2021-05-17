@@ -1,11 +1,14 @@
 package com.github.boritjjaroo.gflib
 
+import android.util.Log
 import java.nio.ByteBuffer
 
 class GFUtil {
     companion object {
 
-        fun byteArrayToHexString(buffer : ByteArray, count : Int) : String {
+        val TAG = "GFLib"
+
+        fun byteArrayToHexString(buffer: ByteArray, count: Int) : String {
             var result = ""
             var byteCount = 0
             for (b in buffer) {
@@ -19,9 +22,21 @@ class GFUtil {
             return result
         }
 
-        fun byteBufferToUTF8(buffer : ByteBuffer) : String {
-            var cs = Charsets.UTF_8
-            return cs.decode(buffer).toString()
+        fun byteArrayToUTF8(byteArray: ByteArray) : String {
+            val cs = Charsets.UTF_8
+            return cs.decode(ByteBuffer.wrap(byteArray)).toString()
+        }
+
+        fun logI(tag: String, str: String) {
+            val MAX_LEN = 2000 // 2000 bytes 마다 끊어서 출력
+            val len = str.length
+            var idx = 0
+            var nextIdx = 0
+            while (idx < len) {
+                nextIdx += MAX_LEN
+                Log.i(tag, str.substring(idx, if (nextIdx > len) len else nextIdx))
+                idx = nextIdx
+            }
         }
     }
 }

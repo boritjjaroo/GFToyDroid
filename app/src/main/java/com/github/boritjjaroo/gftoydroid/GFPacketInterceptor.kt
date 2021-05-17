@@ -2,12 +2,14 @@ package com.github.boritjjaroo.gftoydroid
 
 import android.util.Log
 import com.github.boritjjaroo.gflib.GFUtil
+import com.github.boritjjaroo.gflib.packet.Handler
 import com.github.megatronking.netbare.http.HttpBody
 import com.github.megatronking.netbare.http.HttpRequest
 import com.github.megatronking.netbare.http.HttpResponse
 import com.github.megatronking.netbare.http.HttpResponseHeaderPart
 import com.github.megatronking.netbare.injector.InjectorCallback
 import com.github.megatronking.netbare.injector.SimpleHttpInjector
+import com.github.megatronking.netbare.stream.BufferStream
 import org.apache.commons.httpclient.ChunkedInputStream
 import org.apache.commons.io.IOUtils
 import java.io.ByteArrayInputStream
@@ -20,7 +22,6 @@ import java.util.zip.GZIPInputStream
 class GFPacketInterceptor : SimpleHttpInjector() {
 
     companion object {
-        const val TAG = "Packet"
     }
 
     private var responseHeader: HttpResponseHeaderPart? = null
@@ -28,53 +29,41 @@ class GFPacketInterceptor : SimpleHttpInjector() {
 
 
     override fun sniffRequest(request: HttpRequest): Boolean {
-        //if (request.host().canonicalHostName.equals("klanet.duckdns.org")) return false
-        //if (request.host().canonicalHostName.equals("gfkrcdn.17996cdn.net")) return false
+        Log.i(GFUtil.TAG, "Interceptor::sniffRequest() : " + request.url())
         return true
     }
 
     override fun sniffResponse(response: HttpResponse): Boolean {
-        if (response.path().startsWith("/index.php"))
-            return true
-        //if (response.host().canonicalHostName.equals("klanet.duckdns.org")) return false
-        //if (response.host().canonicalHostName.equals("gfkrcdn.17996cdn.net")) return false
-        //if (response.host().canonicalHostName.startsWith("sn-list")) {
-        //    return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(R.string.high_quality_illustrations), false) && URL(response.url()).toURI().path.equals("/aNy0jv627jejqDIKgdldAlyQjnr7OExKF5k1daMC80I.txt")
-        //}
-        return false
+        Log.i(GFUtil.TAG, "Interceptor::sniffResponse() : " + response.url())
+        return Handler.sniffResponse(response.url())
     }
 
     @Throws(IOException::class)
     override fun onRequestInject(request: HttpRequest, body: HttpBody, callback: InjectorCallback) {
-        Log.i(TAG, "onRequestInject(body)")
-        //this.request = RequestFactory[request.path(), body.toBuffer().array()]
-        Log.i(TAG, "Request : " + request.url().toString())
-        Log.i(TAG, "Data Size : " + body.toBuffer().capacity())
-        //Log.i(TAG, "Data (UTF8) \n" + GFUtil.byteBufferToUTF8(body.toBuffer()))
-        //Log.i(TAG, "Data (Hex) \n" + GFUtil.byteBufferToHexString(body.toBuffer(), 256))
-
+        Log.i(GFUtil.TAG, "Interceptor::onRequestInject(body) : " + request.url())
+        Handler.handleRequest(request.url(), body.toBuffer().array())
         callback.onFinished(body)
     }
 
     @Throws(IOException::class)
     override fun onResponseInject(header: HttpResponseHeaderPart, callback: InjectorCallback) {
-        Log.i(TAG, "onResponseInject(header)")
+        Log.i(GFUtil.TAG, "onResponseInject(header) : " + header.uri().toString())
         this.responseHeader = header
-        responseBuffer = ByteArrayOutputStream()
-        Log.i(TAG, "Response Header : " + header.uri().toString())
+        this.responseBuffer = ByteArrayOutputStream()
         callback.onFinished(header)
     }
 
     @Throws(IOException::class)
     override fun onResponseInject(httpResponse: HttpResponse, body: HttpBody, callback: InjectorCallback) {
-        Log.i(TAG, "onResponseInject(body)")
+        Log.i(GFUtil.TAG, "onResponseInject(body)")
 
         var isResponseBufferReady = false
         var isChunked = false
-        var bodyByteArray = body.toBuffer().array()
-        responseBuffer!!.write(bodyByteArray)
 
-        if ("chunked" == responseHeader!!.header("Transfer-Encoding")) {
+        val bodyByteArray = body.toBuffer().array()
+        this.responseBuffer!!.write(bodyByteArray)
+
+        if ("chunked" == this.responseHeader!!.header("Transfer-Encoding")) {
             isChunked = true
             if (String(bodyByteArray).endsWith("0\r\n\r\n")) {
                 isResponseBufferReady = true
@@ -85,39 +74,35 @@ class GFPacketInterceptor : SimpleHttpInjector() {
         }
 
         if (isResponseBufferReady) {
+
+            val isGzip = "gzip" == this.responseHeader!!.header("Content-Encoding")
+            this.responseBuffer!!.flush()
+
             try {
-                var byteArrayInputStream = ByteArrayInputStream(responseBuffer!!.toByteArray())
-                var inputStream: InputStream? = null
-                if ("gzip" == responseHeader!!.header("Content-Encoding")) {
-                    if (isChunked) {
-                        inputStream = GZIPInputStream(ChunkedInputStream(byteArrayInputStream))
-                    }
-                    else {
-                        inputStream = GZIPInputStream(byteArrayInputStream)
-                    }
+                val byteArrayInputStream = ByteArrayInputStream(this.responseBuffer!!.toByteArray())
+                var inputStream: InputStream = byteArrayInputStream
+                if (isChunked) {
+                    inputStream = ChunkedInputStream(inputStream)
                 }
-                else {
-                    if (isChunked) {
-                        inputStream = ChunkedInputStream(byteArrayInputStream)
-                    }
-                    else {
-                        inputStream = byteArrayInputStream
-                    }
+                if (isGzip) {
+                    inputStream = GZIPInputStream(inputStream)
                 }
 
-                val reponseByteArray = IOUtils.toByteArray(inputStream)
+                val responseByteArray = IOUtils.toByteArray(inputStream)
                 inputStream.close()
 
-                Log.i(TAG, "Data Size : " + reponseByteArray.size)
-                var byteBuffer = ByteBuffer.allocate(reponseByteArray.size)
-                byteBuffer.put(reponseByteArray)
-                byteBuffer.rewind()
-                Log.i(TAG, "Data (UTF8) \n" + GFUtil.byteBufferToUTF8(byteBuffer))
-                Log.i(TAG, "Data (Hex) \n" + GFUtil.byteArrayToHexString(reponseByteArray, 1024))
+                Log.i(GFUtil.TAG, "Data Size : " + responseByteArray.size)
+                val uriPath = this.responseHeader!!.uri().path ?: ""
+
+                Handler.handleRespose(uriPath, responseByteArray)
 
             } catch (e : Exception) {
-
+                Log.e(GFUtil.TAG, e.toString())
+                //Log.e(GFUtil.TAG, e.stackTraceToString())
             }
+
+            // pass the original chunked data that is collected fully
+            callback.onFinished(BufferStream(ByteBuffer.wrap(this.responseBuffer!!.toByteArray())))
         }
 
 //        if ("chunked" != header!!.header("Transfer-Encoding") || "gzip" != header!!.header("Content-Encoding")) {
@@ -197,6 +182,5 @@ class GFPacketInterceptor : SimpleHttpInjector() {
 //            }
 //
 //        }
-        callback.onFinished(body)
     }
 }
