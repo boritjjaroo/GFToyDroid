@@ -2,6 +2,7 @@ package com.github.boritjjaroo.gftoydroid
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.AssetManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -45,6 +46,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
         }
 
         mNetBare.registerNetBareListener(this)
+
+        val am: AssetManager = resources.assets
+
+        try {
+            val input = am.open("skin.json")
+            val data = input.readBytes()
+            //Log.v(GFUtil.TAG, "json : \n" + GFUtil.byteArrayToUTF8(data))
+            GfData.skin.loadSkinInfo(data)
+            input.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onDestroy() {
@@ -138,7 +151,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
         // Json test
         if (true) {
             val str1 = """ { "key1":"val1", "key2":"val2" } """
-            var json1 = JsonParser.parseString(str1).asJsonObject
+            val json1 = JsonParser.parseString(str1).asJsonObject
             Log.v(GFUtil.TAG, "json : $json1")
             json1.addProperty("key1", "val1-mod")
             Log.v(GFUtil.TAG, "json : $json1")
@@ -151,9 +164,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
         if (false) {
             val url = "http://gf-game.girlfrontline.co.kr/index.php/1001/Mall/staticTables"
             val param = "uid=1870807&signcode=ElmNWX75Knzg3TJAkTr%2bp8EFStk2qnzzw5ix2CCsGtsiF%2fv8xNNcZFbM%2fAXSt3b8q95DqggT4tfqCg%3d%3d&req_id=162122475300009"
-            val param2 = "uid=1870807&outdatacode=ElmNWX75Knzg3TVCwWv1%2fZIFSNgzo3%2bvlc%2f7n338X9tMUPjvj4wGOBeX7FPWvSL594VE%2fA0b54C0CFpT%2foz9jBpxZFa23LSSUw6YkQEazsl2fOpjCrel0y%2fW1p4uQtMxwRsDTAtfLhNUIRxK56HPgWK%2bUbDBPPOgBx0R&req_id=162122475300008"
+            //val param2 = "uid=1870807&outdatacode=ElmNWX75Knzg3TVCwWv1%2fZIFSNgzo3%2bvlc%2f7n338X9tMUPjvj4wGOBeX7FPWvSL594VE%2fA0b54C0CFpT%2foz9jBpxZFa23LSSUw6YkQEazsl2fOpjCrel0y%2fW1p4uQtMxwRsDTAtfLhNUIRxK56HPgWK%2bUbDBPPOgBx0R&req_id=162122475300008"
             val uri = Uri.parse(url + "?" + param)
-            val uri2 = Uri.parse(url + "?" + param2)
+            //val uri2 = Uri.parse(url + "?" + param2)
             Log.v(GFUtil.TAG, "param :\n" + param)
             Log.v(GFUtil.TAG, "host :\n" + uri.host)
             Log.v(GFUtil.TAG, "path :\n" + uri.path)

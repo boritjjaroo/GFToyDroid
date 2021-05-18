@@ -11,6 +11,7 @@ object Handler {
 
     var packets: Map<String,GfPacket> = mapOf(
         GetUid.ID to GetUid(),
+        UserInfoResponse.ID to UserInfoResponse(),
         FriendVisitResponse.ID to FriendVisitResponse(),
     )
 
@@ -55,7 +56,7 @@ object Handler {
         var server = ""
         var pathID = ""
         if (tokenizer.hasMoreTokens()) {
-            var index_php = tokenizer.nextToken()
+            val index_php = tokenizer.nextToken()
             if (index_php == "index.php" && tokenizer.hasMoreTokens()) {
                 server = tokenizer.nextToken()
                 if (server == "1001") {
