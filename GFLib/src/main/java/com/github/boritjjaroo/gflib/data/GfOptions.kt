@@ -1,6 +1,6 @@
 package com.github.boritjjaroo.gflib.data
 
-class GfOptions {
-    var modifyDormNotice = true
-    var modifyUserInfoAllSkins = true
+interface GfOptions {
+    fun displayDorimitoryBattery() : Boolean
+    fun injectAllSkins() : Boolean
 }

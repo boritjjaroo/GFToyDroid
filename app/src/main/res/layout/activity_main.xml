@@ -14,15 +14,17 @@
 
         <Button
             android:id="@+id/buttonStartVPN"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onClick"
-            android:text="@string/start_vpn" />
+            android:text="@string/start_vpn"
+            android:textSize="36sp"/>
 
         <Button
             android:id="@+id/buttonTest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="48sp"
             android:onClick="onClick"
             android:text="@string/test" />
 

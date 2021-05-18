@@ -13,7 +13,7 @@ class FriendVisitResponse : GfPacket() {
     override fun process(data: ByteArray) : ByteArray? {
         super.process(data)
 
-        if (GfData.options.modifyDormNotice) {
+        if (GfData.options.displayDorimitoryBattery()) {
             if (isEncrypted(data)) {
                 val json = GfData.session.decryptGFData(data)
                 //GFUtil.logV(GFUtil.TAG, "json :\n" + json.toString())

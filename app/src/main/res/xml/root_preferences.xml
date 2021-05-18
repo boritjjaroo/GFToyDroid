@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/packets">
+
+        <CheckBoxPreference
+            app:title="@string/inject_all_skins"
+            app:key="InjectAllSkins"
+            app:defaultValue="false"
+            />
+        <CheckBoxPreference
+            app:title="@string/display_dormitory_battery"
+            app:key="DisplayDormitoryBattery"
+            app:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

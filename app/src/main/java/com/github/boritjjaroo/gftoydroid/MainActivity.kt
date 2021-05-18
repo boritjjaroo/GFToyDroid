@@ -6,6 +6,9 @@ import android.content.res.AssetManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -26,6 +29,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
 
     companion object {
         private const val REQUEST_CODE_PREPARE = 1
+        private const val REQUEST_CODE_SETTINGS = 2
     }
 
     private lateinit var mNetBare : NetBare
@@ -58,6 +62,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return true
     }
 
     override fun onDestroy() {
@@ -94,6 +104,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
                 test()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            R.id.menuSettings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.menuAbout -> {
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun prepareNetBare() {
@@ -136,7 +160,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_PREPARE) {
+        if (requestCode == REQUEST_CODE_PREPARE && resultCode == Activity.RESULT_OK) {
             prepareNetBare()
         }
     }
@@ -148,8 +172,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
 
     private fun test() {
 
-        // Json test
+        // preference test
         if (true) {
+//            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+//            val injectAllSkin = prefs.getBoolean("InjectAllSkin", false).toString()
+//            val displayDormitoryBattery = prefs.getBoolean("DisplayDormitoryBattery", false).toString()
+//            Log.v(GFUtil.TAG, "InjectAllSkins : $injectAllSkin")
+//            Log.v(GFUtil.TAG, "DisplayDormitoryBattery : $displayDormitoryBattery")
+            Log.v(GFUtil.TAG, "InjectAllSkins : " + GfData.options.injectAllSkins())
+            Log.v(GFUtil.TAG, "DisplayDormitoryBattery : " + GfData.options.displayDorimitoryBattery())
+        }
+        // Json test
+        if (false) {
             val str1 = """ { "key1":"val1", "key2":"val2" } """
             val json1 = JsonParser.parseString(str1).asJsonObject
             Log.v(GFUtil.TAG, "json : $json1")

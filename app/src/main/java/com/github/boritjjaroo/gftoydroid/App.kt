@@ -2,12 +2,15 @@ package com.github.boritjjaroo.gftoydroid
 
 import android.app.Application
 import android.content.Context
+import androidx.preference.PreferenceManager
+import com.github.boritjjaroo.gflib.data.GfData
+import com.github.boritjjaroo.gflib.data.GfOptions
 import com.github.megatronking.netbare.NetBare
 import com.github.megatronking.netbare.NetBareUtils
 import com.github.megatronking.netbare.ssl.JKS
 import me.weishu.reflection.Reflection
 
-class App : Application() {
+class App : Application(), GfOptions {
     companion object {
         const val JSK_ALIAS = "GFToyDroid"
 
@@ -24,6 +27,8 @@ class App : Application() {
         super.onCreate()
 
         sInstance = this
+        GfData.options = this
+
         // 자체 서명 된 인증서 만들기
         mJKS = JKS(this, JSK_ALIAS, JSK_ALIAS.toCharArray(), JSK_ALIAS,JSK_ALIAS,
             JSK_ALIAS, JSK_ALIAS, JSK_ALIAS)
@@ -42,5 +47,15 @@ class App : Application() {
         if (NetBareUtils.isAndroidQ()) {
             Reflection.unseal(base)
         }
+    }
+
+    override fun displayDorimitoryBattery(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean("DisplayDormitoryBattery", false)
+    }
+
+    override fun injectAllSkins(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean("InjectAllSkins", false)
     }
 }

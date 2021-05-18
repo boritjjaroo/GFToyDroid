@@ -22,7 +22,7 @@ class UserInfoResponse : GfPacket() {
 
         GfData.userInfo.parseJson(json)
 
-        if (GfData.options.modifyUserInfoAllSkins) {
+        if (GfData.options.injectAllSkins()) {
             val newJsonSkin = GfData.skin.generateJsonSkinWithUserInfo()
             json.add("skin_with_user_info", newJsonSkin)
             val modifiedData = GfData.session.encrpytGFData(json, true)

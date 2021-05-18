@@ -1,6 +1,21 @@
 <resources>
+    <!-- MainActivity -->
     <string name="app_name">GFToyDroid</string>
     <string name="start_vpn">Start VPN</string>
     <string name="stop_vpn">Stop VPN</string>
     <string name="test">Test</string>
+
+    <!-- Main Menu -->
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+
+    <!-- SettingsActivity -->
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="packets">Packets</string>
+
+    <!-- Packets Preferences -->
+    <string name="inject_all_skins">Inject all skins</string>
+    <string name="display_dormitory_battery">Display dormitory battery</string>
 </resources>
