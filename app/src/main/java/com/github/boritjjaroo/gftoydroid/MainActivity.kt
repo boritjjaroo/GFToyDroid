@@ -2,7 +2,6 @@ package com.github.boritjjaroo.gftoydroid
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.AssetManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -17,51 +16,32 @@ import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
 import com.github.boritjjaroo.gflib.encryption.Sign
 import com.github.megatronking.netbare.NetBare
-import com.github.megatronking.netbare.NetBareConfig
 import com.github.megatronking.netbare.NetBareListener
-import com.github.megatronking.netbare.http.HttpInjectInterceptor
-import com.github.megatronking.netbare.http.HttpInterceptorFactory
 import com.github.megatronking.netbare.ssl.JKS
 import com.google.gson.JsonParser
 import java.io.IOException
+import java.util.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener {
 
     companion object {
         private const val REQUEST_CODE_PREPARE = 1
-        private const val REQUEST_CODE_SETTINGS = 2
     }
 
-    private lateinit var mNetBare : NetBare
     private lateinit var mActionButton : Button
     private lateinit var mTextView : TextView
-    private var mIsVPNStared = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.v(GFUtil.TAG, "MainActivity::onCreate()")
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mNetBare = NetBare.get()
         mActionButton = findViewById(R.id.buttonStartVPN)
         mTextView = findViewById(R.id.textViewMsg)
 
-        if (mNetBare.isActive) {
-            stopNetBare()
-        }
-
-        mNetBare.registerNetBareListener(this)
-
-        val am: AssetManager = resources.assets
-
-        try {
-            val input = am.open("skin.json")
-            val data = input.readBytes()
-            //Log.v(GFUtil.TAG, "json : \n" + GFUtil.byteArrayToUTF8(data))
-            GfData.skin.loadSkinInfo(data)
-            input.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        NetBare.get().registerNetBareListener(this)
+        updateButtonText()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -71,33 +51,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
     }
 
     override fun onDestroy() {
+        Log.v(GFUtil.TAG, "MainActivity::onDestroy()")
         super.onDestroy()
-        stopNetBare()
-        mNetBare.unregisterNetBareListener(this)
-    }
-
-    override fun onServiceStarted() {
-        runOnUiThread {
-            mActionButton.setText(R.string.stop_vpn)
-        }
-    }
-
-    override fun onServiceStopped() {
-        runOnUiThread {
-            mActionButton.setText(R.string.start_vpn)
-        }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.buttonStartVPN->{
-                if (mIsVPNStared) {
-                    stopNetBare()
+                if (App.getInstance().isVPNStarted) {
+                    App.getInstance().stopNetBare()
                 }
                 else {
                     prepareNetBare()
                 }
-
             }
             R.id.buttonTest-> {
                 mTextView.setText("Test")
@@ -118,6 +84,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_PREPARE && resultCode == Activity.RESULT_OK) {
+            prepareNetBare()
+        }
+    }
+
+    override fun onServiceStarted() {
+        Log.i(GFUtil.TAG, "VPN Service is started.")
+        updateButtonText()
+    }
+
+    override fun onServiceStopped() {
+        Log.i(GFUtil.TAG, "VPN Service is stopped.")
+        updateButtonText()
     }
 
     private fun prepareNetBare() {
@@ -142,38 +125,39 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
             return
         }
         // NetBare 서비스 시작
-        val configBuilder = NetBareConfig.defaultHttpConfig(App.getInstance().getJSK(),
-            interceptorFactories()).newBuilder()
-        configBuilder.addAllowedApplication("kr.txwy.and.snqx")
-        configBuilder.excludeSelf(true)
-        mNetBare.start(configBuilder.build())
-
-        mIsVPNStared = true
+        App.getInstance().prepareNetBare()
     }
 
-    private fun stopNetBare() {
-        if (mIsVPNStared) {
-            mNetBare.stop()
+    fun updateButtonText() {
+        if (App.getInstance().isVPNStarted) {
+            mActionButton.setText(R.string.stop_vpn)
         }
-        mIsVPNStared = false
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_PREPARE && resultCode == Activity.RESULT_OK) {
-            prepareNetBare()
+        else {
+            mActionButton.setText(R.string.start_vpn)
         }
-    }
-
-    private fun interceptorFactories() : List<HttpInterceptorFactory> {
-        val interceptor1 = HttpInjectInterceptor.createFactory(GFPacketInterceptor())
-        return listOf(interceptor1)
     }
 
     private fun test() {
 
-        // preference test
         if (true) {
+            val date = Date()
+            Log.v(GFUtil.TAG, "current time : ${date.time.toString()}")
+            val date2 = Date(162098608400007)
+            Log.v(GFUtil.TAG, "time : ${date2.toString()}")
+        }
+        // Uri Builder test
+        if (false) {
+            val builder = Uri.Builder()
+            builder.path("k1=v1&k2=v2&k3=v3")
+            //val uri = builder.build()
+            val uri = Uri.parse("k1=v1&k2=v2&k3=v3")
+            Log.v(GFUtil.TAG, "uri : $uri")
+            builder.appendQueryParameter("k2", "v2_new")
+            val uri2 = builder.build()
+            Log.v(GFUtil.TAG, "uri : $uri2")
+        }
+        // preference test
+        if (false) {
 //            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 //            val injectAllSkin = prefs.getBoolean("InjectAllSkin", false).toString()
 //            val displayDormitoryBattery = prefs.getBoolean("DisplayDormitoryBattery", false).toString()
@@ -212,28 +196,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
 
         // encryption, decryption test code
         if (false) {
-            // 최초 sign 성공
-            val bufferStr = "#fmUM08rmbj9RCa/yNpsJn/3Gs2KoT+zDb2nnarYZD3QtVc7PpuwYOt+gcXrcf3ywhmPxQ3cYQbKE+jkZoWwai58Ed57NQsdijsWgJscU5ggKShO3PMrV5R3qAPSSQM+ff8zM6hmwodmvsQm9O5ZYHqqOBh7zTAgxoblid5aErwdYrVHmK386fYtGqFB6nbkPtChGGztXdQCKoOT5M7eG/zH3BvyxxxK3lrcIbFjxVqAr2flPEG3WlDibfNH4xaNu+axIITUIchx46I/u9aW+X3TS3no+W1PM"
-            Log.v(GFUtil.TAG, "data : count " + bufferStr.length + "\n" + bufferStr)
-            val buffer: ByteArray = bufferStr.toByteArray()
-            val data = GfData.session.decryptGFData(buffer)
-            Log.v(GFUtil.TAG, "json :\n" + data.toString())
+            // sign : eb0bae5cf89e8c4fe6a3d6aa8c9e071e
+            // original param :
+            // uid=1870807&
+            // outdatacode=lq3h%2fjZVsyx%2fOUnkHT0VCBx%2bGn1KXmjjCTLD70tSv%2bbqL8Pjn%2fSzB1z7NIu4%2fkeKw6zAjHK4tHqJuycEuGMyXr3PkwkCi7N8nVDGZgdhWCEZCxvHxSFpDAXp50t%2b%2bdqTY6E6luPpBZjISd8BZBBF1rhszeiFOCR9aoFxpkFv8fYlY%2bFPr4jYxNVk2f6ysqQQnwEuR4uHalvS%2b%2bcLI7TJc8tBB3OloKzhRpQe4vwiLx78%2f4k%3d
+            // &req_id=162142191200011
+            // outdatacode :
+            // {"adjutant_multi":"single|0|1|307|5603|0|0,single|1|0|-1|0|0|0,single|2|1|270|5305|1|0,single|3|2|4|12|0|0,combined|0|3|1001|0|0|0,combined|1|0|0|0|0|0"}
 
-            GfData.session.sign = Sign("c5eabaa63219cf9fa2651756c88f9fa2")
-            // 성공한
-            val bufferStr2 = "#SKBHAK7kjhV8buC6pU0WQ56xgyeRkejtfXsAL+eG4Mfua/3nB+DP2y1b1T9fsJ4HEqbg3fTw/AI7nuRe5q/OLVrz3ibdpY/j3XlKXjJdmjpvO0Cgzs/qrjPhUk9LXdFagT6iSDgsxIu/p061VLN+ZBpqwBS59d1bZhadsGth8Ow9CqR1+qwzmGEIj/j6EbcUERwTD1tuyBxpfRZxgVtTpr1bD4t0lQAmkSyao/dUJbi8lExcfGoeQGvEpk3N8l4PEK4yhbv3pxA/yGGQHvgukyBS7Yuu7jIC8pUj5rUaLosEOsZT7z81mdbtluJB+k9jic/u/Bmhn1VGJbU4yD4yWhO7Vp8RInMaumq+vNZlK2vqXn8MBXMkZIr8M3RFEHTJoaclr5iq+1hid9dUIK6l5qgrbGM7hYqwiHbBM1Plkg/rotvdtUZWTggUk+ABnPlSQ3i2rATce89R9Kwf84jhWMxOht7lJ0bCLSPo34NiQX/ig/yPdSiTm/d6qY6soOIG03VvwPcUpBQ4JTNKVYjx6FU/CpHC9wNcSNCTZ9RZsr38xna2BlqQ3IQb387UmscyaeiTLavgAawMdIPGXpagNgJ7JHFctkJot4qPzVap5gWafmvzha7e0+1bcXKNKIfOEPJ/0aeTMVyLlTVrhYEnbbuT5WiTm6fyhaj1yHJykcWLSJfQswauWrJ63JaM72YVLorp5LHwfFFLKpvnID8/nqDu+gBrEHLbi7dzVq7j8DNnOtAzMwr4yA1ew8mX61DQJchMntT3Z/muoYT7gKVY54CYT84FctS5NZzZC9dG09B10UZ5/b2r+SplkHONtbDHqEfEHSfzYHAjGhgWEBqB3k05d9aHl1azBpQvLo/lQInqCAFDtDsc07dNx/PyFI3NAkUGZKEo3t6FDOJ9zNoaE3OD25AKbssgf9NvdMVmt7+I6BNsRTePjsb4I+mKT847Jmbfw2rhWu/kP/46C1SuvydAU6DLU1aywX33f3chgOCAdBPQqTJr9eQB7EQ6iBUTJYnB/MiUZE0hIGbpAtYJnjBXkOtNHWoCZGwtSKn51fiMS3JHHey5fKjB2EnyQjR0+9PzBd5zDo6tSsQEKZE5XLby9qtjTbrwMXzWrUbHqFLslQpl0LMDDiBhFDrPMeYEk2H5lz1BMCapSqI6HzGZsyubivA26VDj2QhANVBb3EiufSZWnlqNHoBem1pY3hhNg/UAYfJeQlKqAMyhuR5thyUVnVqcYkmfHzBi5TWaT+oopp5uyQHvxXaZHUxBwk+zuIqy3jq3z9X0i/wJSB/duquQwMLpncg9x7LmfSNyXmn+iimZUHc49LICbGp/es8CGdZ1qndWFBiTBgVWmnW4YlLkPvFQ"
-            Log.v(GFUtil.TAG, "data : count " + bufferStr2.length + "\n" + bufferStr2)
-            val buffer2: ByteArray = bufferStr2.toByteArray()
-            val data2 = GfData.session.decryptGFData(buffer2)
-            Log.v(GFUtil.TAG, "json :\n" + data2.toString())
+            val query = "uid=1870807&outdatacode=lq3h%2fjZVsyx%2fOUnkHT0VCBx%2bGn1KXmjjCTLD70tSv%2bbqL8Pjn%2fSzB1z7NIu4%2fkeKw6zAjHK4tHqJuycEuGMyXr3PkwkCi7N8nVDGZgdhWCEZCxvHxSFpDAXp50t%2b%2bdqTY6E6luPpBZjISd8BZBBF1rhszeiFOCR9aoFxpkFv8fYlY%2bFPr4jYxNVk2f6ysqQQnwEuR4uHalvS%2b%2bcLI7TJc8tBB3OloKzhRpQe4vwiLx78%2f4k%3d&req_id=162142191200011"
+            Log.v(GFUtil.TAG, "query : \n$query")
+            val uri = Uri.parse("http://dummy.host/path?$query")
+            val outdatacode = uri.getQueryParameter("outdatacode")
+            Log.v(GFUtil.TAG, "outdatacode : \n$outdatacode")
 
-            // 실패한
-            val bufferStr3 = "#SKBHAK7kjhV8b7Tq8xwQQJS0gCaRzu/oIywAL+eG4Mfua/3nH+Rdww0j1fxPdy/hVBaQpd+r99yLCRM3n/N75tIHylDMpnuwmoRsCOyTZWEm7Suf2CK2hJYDYr4UI0odD3p6Pvm8CEk5hPcQYtNY35ZzA6BoL/9c1qV3OKg/Sq0nGc7+CZglwR0n2nXy0qxYtROymoB3LYH+ukPB6n2xuUVFdt8vPlQc6NCiI/bH0NSUaPNPC17QnJwBKcZuVH4m6y1fjHxdzhYncuyli04lm08HCpkICfk/sI06EQVlY1lm3yfoKuVhjhWqi1JKX1qW+Gt7P1z6tpDOSykHckwbisV7k1FZ0oIMHzQZlnk="
-            Log.v(GFUtil.TAG, "data : count " + bufferStr3.length + "\n" + bufferStr3)
-            val buffer3: ByteArray = bufferStr3.toByteArray()
-            val data3 = GfData.session.decryptGFData(buffer3)
-            Log.v(GFUtil.TAG, "json :\n" + data3.toString())
+            val sign =  Sign("eb0bae5cf89e8c4fe6a3d6aa8c9e071e")
+            val jsonStr = String(GfData.session.decryptGFDataRaw(outdatacode!!.toByteArray(), sign))
+            Log.v(GFUtil.TAG, "json : \n$jsonStr")
+            val date = GfData.session.date
+            Log.v(GFUtil.TAG, "time : " + date.time)
+
+            val newOutdatacode = String(GfData.session.encrpytGFData(jsonStr, false, false, sign, date))
+            Log.v(GFUtil.TAG, "new Outdatacode : \n$newOutdatacode")
         }
+
 
     }
 

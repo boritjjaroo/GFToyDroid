@@ -3,10 +3,7 @@ package com.github.boritjjaroo.gftoydroid
 import android.util.Log
 import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.packet.Handler
-import com.github.megatronking.netbare.http.HttpBody
-import com.github.megatronking.netbare.http.HttpRequest
-import com.github.megatronking.netbare.http.HttpResponse
-import com.github.megatronking.netbare.http.HttpResponseHeaderPart
+import com.github.megatronking.netbare.http.*
 import com.github.megatronking.netbare.injector.InjectorCallback
 import com.github.megatronking.netbare.injector.SimpleHttpInjector
 import com.github.megatronking.netbare.stream.BufferStream
@@ -41,10 +38,27 @@ class GFPacketInterceptor : SimpleHttpInjector() {
     }
 
     @Throws(IOException::class)
+    override fun onRequestInject(header: HttpRequestHeaderPart, callback: InjectorCallback) {
+        val contentLength = Handler.handleRequestHeader(header.uri().toString())
+        if (0 <= contentLength) {
+            val newHeader = header.newBuilder().replaceHeader("Content-Length", contentLength.toString()).build()
+            callback.onFinished(newHeader)
+        }
+        else {
+            callback.onFinished(header)
+        }
+    }
+
+    @Throws(IOException::class)
     override fun onRequestInject(request: HttpRequest, body: HttpBody, callback: InjectorCallback) {
         Log.v(GFUtil.TAG, "Interceptor::onRequestInject(body) : " + request.url())
-        Handler.handleRequest(request.url(), body.toBuffer().array())
-        callback.onFinished(body)
+        val modifiedBody = Handler.handleRequestBody(request.url(), body.toBuffer().array())
+        if (modifiedBody != null) {
+            callback.onFinished(BufferStream(ByteBuffer.wrap(modifiedBody)))
+        }
+        else {
+            callback.onFinished(body)
+        }
     }
 
     @Throws(IOException::class)
@@ -95,9 +109,9 @@ class GFPacketInterceptor : SimpleHttpInjector() {
                 inputStream.close()
 
                 Log.v(GFUtil.TAG, "Data Size : " + responseByteArray.size)
-                val uriPath = this.responseHeader!!.uri().path ?: ""
+                val url = this.responseHeader!!.uri().toString() ?: ""
 
-                val modifiedByteArray = Handler.handleRespose(uriPath, responseByteArray)
+                val modifiedByteArray = Handler.handleRespose(url, responseByteArray)
 
                 if (modifiedByteArray != null) {
                     val outputStream = ByteArrayOutputStream()

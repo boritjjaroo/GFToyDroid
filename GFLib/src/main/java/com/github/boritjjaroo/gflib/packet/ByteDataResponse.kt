@@ -4,7 +4,7 @@ import android.util.Log
 import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
 
-class ByteDataResponse : GfPacket() {
+class ByteDataResponse : GfResponsePacket() {
     override fun process(data: ByteArray) : ByteArray? {
         super.process(data)
 

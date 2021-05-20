@@ -9,4 +9,13 @@ object GfData {
     var userInfo: UserInfo = UserInfo()
 
     var skin: Skin = Skin()
+
+    var adjutantMulti: AdjutantMulti = AdjutantMulti()
+
+    var isAllSkinInjected: Boolean = false
+
+    fun init() {
+        session.init()
+        isAllSkinInjected = false
+    }
 }

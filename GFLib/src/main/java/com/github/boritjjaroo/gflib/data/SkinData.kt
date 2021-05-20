@@ -31,7 +31,7 @@ class SkinData() {
     fun generateJsonSkinWithUserInfo() : JsonObject {
         val json = JsonObject()
         json.addProperty("skin_id", this.id.toString())
-        json.addProperty("user_id", GfData.userInfo.id)
+        json.addProperty("user_id", GfData.userInfo.userId)
         json.addProperty("is_read", "0")
         return json
     }

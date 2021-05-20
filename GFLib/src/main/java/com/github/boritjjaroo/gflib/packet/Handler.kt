@@ -5,12 +5,16 @@ import java.util.*
 
 object Handler {
 
-    var defaultResponseHandler: GfPacket = UnknownResponse()
-    var defaultRequestHandler: GfPacket = UnknownRequest()
-    var defaultByteDataResponse: GfPacket = ByteDataResponse()
+    var defaultResponseHandler: GfResponsePacket = UnknownResponse()
+    var defaultRequestHandler: GfRequestPacket = UnknownRequest()
+    var defaultByteDataResponse: GfResponsePacket = ByteDataResponse()
 
-    var packets: Map<String,GfPacket> = mapOf(
-        GetUid.ID to GetUid(),
+    var requestPackets: Map<String,GfRequestPacket> = mapOf(
+        AdjutantRequest.ID to AdjutantRequest(),
+    )
+
+    var responsePackets: Map<String,GfResponsePacket> = mapOf(
+        GetUidResponse.ID to GetUidResponse(),
         UserInfoResponse.ID to UserInfoResponse(),
         FriendVisitResponse.ID to FriendVisitResponse(),
     )
@@ -22,18 +26,46 @@ object Handler {
         val path = uri.path
         if (!path!!.startsWith("/index.php"))
             return false
-        val (server, pathID) = parseUriPath(path)
+        val (server, pathID) = parseUrl(url)
         return server == "1001"
         //return packets.containsKey(pathID)
     }
 
-    fun handleRequest(url: String, params: ByteArray) {
-        defaultRequestHandler.process(params)
+    fun handleRequestHeader(url: String) : Int {
+        val (server, pathID) = parseUrl(url)
+        val packet = this.requestPackets[pathID]
+        var contentLength = -1
+
+        if (packet != null)
+        {
+            contentLength = packet.processHeader()
+        }
+        else {
+            contentLength = this.defaultRequestHandler.processHeader()
+        }
+
+        return contentLength
     }
 
-    fun handleRespose(uriPath: String, packetData: ByteArray) : ByteArray? {
-        val (server, pathID) = parseUriPath(uriPath)
-        val packet: GfPacket? = this.packets[pathID]
+    fun handleRequestBody(url: String, query: ByteArray) : ByteArray? {
+        val (server, pathID) = parseUrl(url)
+        val packet = this.requestPackets[pathID]
+        val modifiedData : ByteArray?
+
+        if (packet != null)
+        {
+            modifiedData = packet.processBody(query)
+        }
+        else {
+            modifiedData = this.defaultRequestHandler.processBody(query)
+        }
+
+        return modifiedData
+    }
+
+    fun handleRespose(url: String, packetData: ByteArray) : ByteArray? {
+        val (server, pathID) = parseUrl(url)
+        val packet = this.responsePackets[pathID]
         val modifiedData : ByteArray?
 
         if (packet != null)
@@ -51,8 +83,9 @@ object Handler {
         return modifiedData
     }
 
-    fun parseUriPath(uriPath: String) : Pair<String, String> {
-        val tokenizer = StringTokenizer(uriPath, "/")
+    fun parseUrl(url: String) : Pair<String, String> {
+        val uri = Uri.parse(url)
+        val tokenizer = StringTokenizer(uri.path, "/")
         var server = ""
         var pathID = ""
         if (tokenizer.hasMoreTokens()) {

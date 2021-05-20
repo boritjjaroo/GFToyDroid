@@ -26,6 +26,7 @@ public class GfEncryptionInputStream extends InputStream implements AutoCloseabl
 
     private InputStream in;
 
+    public long timestamp;
     private Date date;
 
     public GfEncryptionInputStream(final InputStream in, final Sign sign) throws IOException {
@@ -53,6 +54,7 @@ public class GfEncryptionInputStream extends InputStream implements AutoCloseabl
         final byte[] check = Arrays.copyOfRange(rawData, 10, 26);
         final byte[] generatedCheck = sign.generateCheck(rawData, 26, rawData.length - 26);
 
+        this.timestamp = Long.parseLong(new String(date));
         this.date = new Date(Long.parseLong(new String(date)));
 
         if (!Arrays.equals(generatedCheck, check)) {

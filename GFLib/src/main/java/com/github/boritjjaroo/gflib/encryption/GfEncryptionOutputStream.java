@@ -66,7 +66,7 @@ public class GfEncryptionOutputStream extends OutputStream implements AutoClosea
         byteArrayOutputStream.close();
         rawData.write(sign.generateCheck(data, 0, data.length));
         rawData.write(data);
-        final Base64OutputStream base64OutputStream = new Base64OutputStream(out, Base64.DEFAULT);
+        final Base64OutputStream base64OutputStream = new Base64OutputStream(out, Base64.DEFAULT | Base64.NO_WRAP);
         try {
             final Cipher rc4 = Cipher.getInstance("RC4");
             rc4.init(

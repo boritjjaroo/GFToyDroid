@@ -10,11 +10,26 @@ import com.google.gson.JsonParser
 import java.io.*
 import java.util.*
 
-class Session {
-    var sign: Sign = Sign("yundoudou")
-    var date: Date = Date()
+class Session() {
+    lateinit var sign: Sign
+    lateinit var date: Date
+    lateinit var reqId: String
+
+    init {
+        init()
+    }
+
+    fun init() {
+        sign = Sign("yundoudou")
+        date = Date()
+        reqId = "162098608400008"
+    }
 
     fun decryptGFData(gfData: ByteArray) : JsonObject {
+        return decryptGFData(gfData, this.sign)
+    }
+
+    fun decryptGFData(gfData: ByteArray, sign: Sign) : JsonObject {
         //Log.i(GFUtil.TAG, "gfData : \n" + GFUtil.byteBufferToUTF8(ByteBuffer.wrap(gfData)))
 
         var data = JsonObject()
@@ -36,7 +51,7 @@ class Session {
 
         try {
             val byteArrayInputStream = ByteArrayInputStream(gfDataPadded, startIndex, gfDataPadded.size - startIndex)
-            val inputStream = GfEncryptionInputStream(byteArrayInputStream, this.sign)
+            val inputStream = GfEncryptionInputStream(byteArrayInputStream, sign)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8))
             data = JsonParser.parseReader(bufferedReader) as JsonObject
             this.date = inputStream.date
@@ -50,6 +65,10 @@ class Session {
     }
 
     fun decryptGFDataRaw(gfData: ByteArray) : ByteArray {
+        return decryptGFDataRaw(gfData, this.sign)
+    }
+
+    fun decryptGFDataRaw(gfData: ByteArray, sign: Sign) : ByteArray {
         //Log.i(GFUtil.TAG, "gfData : \n" + GFUtil.byteBufferToUTF8(ByteBuffer.wrap(gfData)))
 
         var byteArray = ByteArray(1)
@@ -71,10 +90,10 @@ class Session {
 
         try {
             val byteArrayInputStream = ByteArrayInputStream(gfDataPadded, startIndex, gfDataPadded.size - startIndex)
-            val inputStream = GfEncryptionInputStream(byteArrayInputStream, this.sign)
-            val bufferedReader = BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8))
+            val inputStream = GfEncryptionInputStream(byteArrayInputStream, sign)
             byteArray = inputStream.readBytes()
             inputStream.close()
+            this.date = inputStream.date
         } catch (e: Exception) {
             Log.w(GFUtil.TAG, "Session::decryptGFData() failed")
             Log.e(GFUtil.TAG, e.toString())
@@ -84,15 +103,21 @@ class Session {
         return byteArray
     }
 
-    fun encrpytGFData(json: JsonObject, compress: Boolean) : ByteArray {
+    fun encrpytGFData(str: String, compress: Boolean, beginWithSharp: Boolean) : ByteArray {
+        return encrpytGFData(str, compress, beginWithSharp, this.sign, this.date)
+    }
+
+    fun encrpytGFData(str: String, compress: Boolean, beginWithSharp: Boolean, sign: Sign, date: Date) : ByteArray {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        byteArrayOutputStream.write(byteArrayOf('#'.code.toByte()))
-        byteArrayOutputStream.flush()
+        if (beginWithSharp) {
+            byteArrayOutputStream.write(byteArrayOf('#'.code.toByte()))
+            byteArrayOutputStream.flush()
+        }
         val outputStream = GfEncryptionOutputStream(byteArrayOutputStream)
         val writer = OutputStreamWriter(outputStream)
-        writer.write(json.toString())
+        writer.write(str)
         writer.flush()
-        outputStream.finish(this.date, this.sign, compress)
+        outputStream.finish(date, sign, compress)
         outputStream.flush()
         val byteArray = byteArrayOutputStream.toByteArray()
         writer.close()
@@ -101,4 +126,5 @@ class Session {
 
         return byteArray
     }
+
 }

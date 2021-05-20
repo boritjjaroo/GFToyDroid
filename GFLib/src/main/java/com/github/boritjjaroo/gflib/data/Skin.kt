@@ -7,9 +7,15 @@ import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 
 class Skin {
+
+    var mySkins = mutableMapOf<Int, Int>()
     var skinDatas = mutableMapOf<Int, SkinData>()
 
-    fun loadSkinInfo(data: ByteArray) {
+    fun hasSkin(id: Int) : Boolean {
+        return mySkins.contains(id)
+    }
+
+    fun loadSkinData(data: ByteArray) {
         skinDatas.clear()
         try {
             val reader = BufferedReader(InputStreamReader(ByteArrayInputStream(data), Charsets.UTF_8))
@@ -23,6 +29,17 @@ class Skin {
 
         }
     }
+
+    fun parseJsonUserInfo(json: JsonObject) {
+        mySkins.clear()
+        val jsonSkinInfo = json.get("skin_with_user_info").asJsonObject
+        val keys = jsonSkinInfo.keySet()
+        keys.forEach { key ->
+            val id = key.toInt()
+            mySkins.put(id, id)
+        }
+    }
+
     //"skin_with_user_info": {
     //    "201": { "skin_id": "201", "user_id": "1870807", "is_read": "0" },
     //    "202": { "skin_id": "202", "user_id": "1870807", "is_read": "0" }

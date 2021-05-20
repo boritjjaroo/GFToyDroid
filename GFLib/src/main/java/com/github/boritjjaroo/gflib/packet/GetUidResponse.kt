@@ -6,7 +6,7 @@ import com.github.boritjjaroo.gflib.data.GfData
 import com.github.boritjjaroo.gflib.encryption.Sign
 import com.google.gson.JsonObject
 
-class GetUid : GfPacket() {
+class GetUidResponse : GfResponsePacket() {
 
     companion object {
         val ID = "Index/getUidTianxiaQueue"
@@ -18,6 +18,8 @@ class GetUid : GfPacket() {
         //Log.v(GFUtil.TAG, "GetUid:process()")
 
         if (isEncrypted(data)) {
+            GfData.init()
+
             val json: JsonObject = GfData.session.decryptGFData(data)
             Log.v(GFUtil.TAG, "json :\n" + json.toString())
 

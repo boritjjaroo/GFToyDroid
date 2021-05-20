@@ -4,7 +4,7 @@ import android.util.Log
 import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
 
-class FriendVisitResponse : GfPacket() {
+class FriendVisitResponse : GfResponsePacket() {
 
     companion object {
         val ID = "Friend/visit"
@@ -27,7 +27,7 @@ class FriendVisitResponse : GfPacket() {
                 // Dormitory notice force on
                 jsonNotice.addProperty("is_view_notice", "1")
                 jsonNotice.addProperty("notice", newNotice)
-                val modifiedData = GfData.session.encrpytGFData(json, true)
+                val modifiedData = GfData.session.encrpytGFData(json.toString(), true, true)
                 Log.i(GFUtil.TAG, "Dormitory notice is modified.")
                 return modifiedData
             }
