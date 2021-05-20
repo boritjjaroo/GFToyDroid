@@ -23,14 +23,26 @@ class UserInfoResponse : GfResponsePacket() {
         GfData.userInfo.parseJson(json)
         GfData.adjutantMulti.parseJsonUserInfo(json)
         GfData.skin.parseJsonUserInfo(json)
-        Log.v(GFUtil.TAG, "adjutant_multi : \n${GfData.adjutantMulti.requestString}")
 
         if (GfData.options.injectAllSkins()) {
+
+            // Load private adjutant info
+            val adjutantMultiData = GfData.repository.getAdjutantMulti()
+            if (adjutantMultiData != null) {
+                GfData.adjutantMulti.parseJsonString(adjutantMultiData)
+                val jsonAdjutant = GfData.adjutantMulti.generateJsonUserAdjutantMulti()
+                json.add("user_adjutant_multi", jsonAdjutant)
+                Log.i(GFUtil.TAG, "Load private adjutant info.")
+            }
+
+            // Inject all skin data to user_info
             val newJsonSkin = GfData.skin.generateJsonSkinWithUserInfo()
             json.add("skin_with_user_info", newJsonSkin)
-            val modifiedData = GfData.session.encrpytGFData(json.toString(), true, true)
             GfData.isAllSkinInjected = true
             Log.i(GFUtil.TAG, "All skin infos are injected.")
+
+            // Encrypt Json
+            val modifiedData = GfData.session.encrpytGFData(json.toString(), true, true)
             return modifiedData
         }
 

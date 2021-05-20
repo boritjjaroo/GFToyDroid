@@ -28,7 +28,10 @@ class AdjutantRequest : GfRequestPacket() {
                 // decrypt original data to find out timestamp value
                 val uri = Uri.parse("http://dummy.host/path?" + String(data))
                 val outdatacode = uri.getQueryParameter("outdatacode")
-                GfData.session.decryptGFDataRaw(outdatacode!!.toByteArray())
+                val json = GfData.session.decryptGFData(outdatacode!!.toByteArray())
+                val jsonString = json.get("adjutant_multi").asString
+                GfData.repository.putAdjutantMulti(jsonString)
+                Log.i(GFUtil.TAG, "Private adjutant info are saved.")
 
                 // Send user_info's adjutant_multi data instead
                 val reqId = uri.getQueryParameter("req_id")

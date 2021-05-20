@@ -5,6 +5,7 @@ object GfData {
     var session: Session = Session()
 
     lateinit var options: GfOptions
+    lateinit var repository: GfDataRepository
 
     var userInfo: UserInfo = UserInfo()
 

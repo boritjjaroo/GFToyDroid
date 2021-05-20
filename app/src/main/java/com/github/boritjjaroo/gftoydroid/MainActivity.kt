@@ -1,6 +1,7 @@
 package com.github.boritjjaroo.gftoydroid
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,9 +12,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
+import com.github.boritjjaroo.gflib.data.GfDataRepository
 import com.github.boritjjaroo.gflib.encryption.Sign
 import com.github.megatronking.netbare.NetBare
 import com.github.megatronking.netbare.NetBareListener
@@ -22,7 +25,7 @@ import com.google.gson.JsonParser
 import java.io.IOException
 import java.util.*
 
-class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener {
+class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener, GfDataRepository {
 
     companion object {
         private const val REQUEST_CODE_PREPARE = 1
@@ -36,6 +39,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        GfData.repository = this
 
         mActionButton = findViewById(R.id.buttonStartVPN)
         mTextView = findViewById(R.id.textViewMsg)
@@ -52,6 +57,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
 
     override fun onDestroy() {
         Log.v(GFUtil.TAG, "MainActivity::onDestroy()")
+        Toast.makeText(applicationContext, "GFToyDroid is destroyed.", Toast.LENGTH_SHORT).show()
         super.onDestroy()
     }
 
@@ -101,6 +107,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener 
     override fun onServiceStopped() {
         Log.i(GFUtil.TAG, "VPN Service is stopped.")
         updateButtonText()
+    }
+
+    override fun getData(key: String): String? {
+        return getPreferences(Context.MODE_PRIVATE).getString(key, null)
+    }
+
+    override fun putData(key: String, value: String) {
+        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putString(key, value)
+            apply()
+        }
     }
 
     private fun prepareNetBare() {

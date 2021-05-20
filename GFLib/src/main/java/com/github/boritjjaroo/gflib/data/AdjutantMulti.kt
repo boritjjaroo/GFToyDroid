@@ -1,5 +1,6 @@
 package com.github.boritjjaroo.gflib.data
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
 class AdjutantMulti {
@@ -14,17 +15,27 @@ class AdjutantMulti {
         var targetId: Int
         // 0 : default(no costume)
         var skinId: Int
-        var isSexy: Boolean
+        var isSexy: Int
         var mod: Int
 
         init {
             val values = data.split('|')
-            this.index = values[1].toInt()
-            this.targetType = values[2].toInt()
-            this.targetId = values[3].toInt()
-            this.skinId = values[4].toInt()
-            this.isSexy = values[5].toBoolean()
-            this.mod = values[6].toInt()
+            if (values.size == 7) {
+                this.index = values[1].toInt()
+                this.targetType = values[2].toInt()
+                this.targetId = values[3].toInt()
+                this.skinId = values[4].toInt()
+                this.isSexy = values[5].toInt()
+                this.mod = values[6].toInt()
+            }
+            else {
+                this.index = 0
+                this.targetType = 0
+                this.targetId = 0
+                this.skinId = 0
+                this.isSexy = 0
+                this.mod = 0
+            }
         }
     }
 
@@ -45,12 +56,38 @@ class AdjutantMulti {
                 adjutant.targetType,
                 adjutant.targetId,
                 adjutant.skinId,
-                { if (adjutant.isSexy) 1 else 0 },
+                adjutant.isSexy,
                 adjutant.mod,
             )
             if (index < adjutants.size - 1) jsonStr += ","
         }
         return jsonStr
+    }
+
+    fun generateJsonUserAdjutantMulti() : JsonObject {
+        val jsonSingle = JsonArray()
+        val jsonCombined = JsonArray()
+        for ((index, adjutant) in adjutants.withIndex()) {
+            val jsonItem = JsonObject()
+            jsonItem.addProperty("index", adjutant.index.toString())
+            jsonItem.addProperty("target_type", adjutant.targetType.toString())
+            jsonItem.addProperty("target_id", adjutant.targetId.toString())
+            jsonItem.addProperty("skin_id", adjutant.skinId.toString())
+            jsonItem.addProperty("is_sexy", adjutant.isSexy.toString())
+            jsonItem.addProperty("mod", adjutant.mod.toString())
+            if (index < 4) {
+                jsonSingle.add(jsonItem)
+            }
+            else {
+                jsonCombined.add(jsonItem)
+            }
+        }
+
+        val json = JsonObject()
+        json.add("single", jsonSingle)
+        json.add("combined", jsonCombined)
+
+        return json
     }
 
     fun parseJsonUserInfo(json: JsonObject) {
