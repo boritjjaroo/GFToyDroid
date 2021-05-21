@@ -11,9 +11,8 @@ class AdjutantRequest : GfRequestPacket() {
         val ID = "Index/adjutant"
     }
 
-    override fun processHeader() : Int {
-        val query = generateFakeQueryData(GfData.session.reqId)
-        return query.length
+    override fun processHeader(): Int {
+        return if (GfData.isAllSkinInjected) 1 else 0
     }
 
     override fun processBody(data: ByteArray) : ByteArray? {

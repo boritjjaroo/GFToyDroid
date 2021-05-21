@@ -71,12 +71,22 @@ class App : Application(), GfOptions {
 
     override fun displayDorimitoryBattery(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        return prefs.getBoolean("DisplayDormitoryBattery", false)
+        return prefs.getBoolean(getString(R.string.key_display_dormitory_battery), false)
     }
 
     override fun injectAllSkins(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        return prefs.getBoolean("InjectAllSkins", false)
+        return prefs.getBoolean(getString(R.string.key_inject_all_skins), false)
+    }
+
+    override fun usePrivateAdjutant(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean(getString(R.string.key_use_private_adjutant), false)
+    }
+
+    override fun usePrivateGunSkin(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean(getString(R.string.key_use_private_gun_skin), false)
     }
 
     fun prepareNetBare() {

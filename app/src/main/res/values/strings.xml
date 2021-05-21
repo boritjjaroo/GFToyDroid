@@ -18,4 +18,10 @@
     <!-- Packets Preferences -->
     <string name="inject_all_skins">Inject all skins</string>
     <string name="display_dormitory_battery">Display dormitory battery</string>
+    <string name="use_private_adjutant">Use private adjutant</string>
+    <string name="use_private_gun_skin">Use private gun_skin</string>
+    <string name="key_use_private_adjutant">UsePrivateAdjutant</string>
+    <string name="key_inject_all_skins">InjectAllSkins</string>
+    <string name="key_display_dormitory_battery">DisplayDormitoryBattery</string>
+    <string name="key_use_private_gun_skin">UsePrivateGunSkin</string>
 </resources>

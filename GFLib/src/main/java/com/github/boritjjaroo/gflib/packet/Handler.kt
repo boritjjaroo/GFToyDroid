@@ -11,6 +11,7 @@ object Handler {
 
     var requestPackets: Map<String,GfRequestPacket> = mapOf(
         AdjutantRequest.ID to AdjutantRequest(),
+        ChangeSkinRequest.ID to ChangeSkinRequest(),
     )
 
     var responsePackets: Map<String,GfResponsePacket> = mapOf(

@@ -9,6 +9,8 @@ object GfData {
 
     var userInfo: UserInfo = UserInfo()
 
+    var gun: Gun = Gun()
+
     var skin: Skin = Skin()
 
     var adjutantMulti: AdjutantMulti = AdjutantMulti()
@@ -17,6 +19,8 @@ object GfData {
 
     fun init() {
         session.init()
+        gun.init()
+        skin.init()
         isAllSkinInjected = false
     }
 }

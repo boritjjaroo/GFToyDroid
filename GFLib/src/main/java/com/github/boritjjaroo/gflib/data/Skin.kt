@@ -15,6 +15,10 @@ class Skin {
         return mySkins.contains(id)
     }
 
+    fun init() {
+        mySkins.clear()
+    }
+
     fun loadSkinData(data: ByteArray) {
         skinDatas.clear()
         try {

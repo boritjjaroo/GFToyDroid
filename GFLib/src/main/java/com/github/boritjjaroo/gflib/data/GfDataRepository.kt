@@ -7,6 +7,7 @@ interface GfDataRepository {
     class Key{
         companion object {
             val AdjutantMulti = "AdjutantMulti"
+            val GunSkin = "GunSkin"
         }
     }
 
@@ -16,5 +17,13 @@ interface GfDataRepository {
 
     fun putAdjutantMulti(value: String) {
         putData(Key.AdjutantMulti, value)
+    }
+
+    fun getGunSkin() : String? {
+        return getData(Key.GunSkin)
+    }
+
+    fun putGunSkin(value: String) {
+        putData(Key.GunSkin, value)
     }
 }

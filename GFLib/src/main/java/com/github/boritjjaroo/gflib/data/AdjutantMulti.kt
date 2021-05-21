@@ -46,24 +46,6 @@ class AdjutantMulti {
         jsonStr.split(',').forEach { item -> adjutants.add(Adjutant(item)) }
     }
 
-    fun generateJsonString() : String {
-        var jsonStr = ""
-        for ((index, adjutant) in adjutants.withIndex()) {
-            jsonStr += String.format(
-                "%s|%d|%d|%d|%d|%d|%d",
-                { if (index < 4) "single" else "combined" },
-                adjutant.index,
-                adjutant.targetType,
-                adjutant.targetId,
-                adjutant.skinId,
-                adjutant.isSexy,
-                adjutant.mod,
-            )
-            if (index < adjutants.size - 1) jsonStr += ","
-        }
-        return jsonStr
-    }
-
     fun generateJsonUserAdjutantMulti() : JsonObject {
         val jsonSingle = JsonArray()
         val jsonCombined = JsonArray()

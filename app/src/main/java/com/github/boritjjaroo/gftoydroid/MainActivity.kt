@@ -100,13 +100,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener,
     }
 
     override fun onServiceStarted() {
-        Log.i(GFUtil.TAG, "VPN Service is started.")
-        updateButtonText()
+        runOnUiThread {
+            Log.i(GFUtil.TAG, "VPN Service is started.")
+            updateButtonText()
+        }
     }
 
     override fun onServiceStopped() {
-        Log.i(GFUtil.TAG, "VPN Service is stopped.")
-        updateButtonText()
+        runOnUiThread {
+            Log.i(GFUtil.TAG, "VPN Service is stopped.")
+            updateButtonText()
+        }
     }
 
     override fun getData(key: String): String? {
@@ -174,16 +178,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener,
             val uri2 = builder.build()
             Log.v(GFUtil.TAG, "uri : $uri2")
         }
-        // preference test
-        if (false) {
-//            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-//            val injectAllSkin = prefs.getBoolean("InjectAllSkin", false).toString()
-//            val displayDormitoryBattery = prefs.getBoolean("DisplayDormitoryBattery", false).toString()
-//            Log.v(GFUtil.TAG, "InjectAllSkins : $injectAllSkin")
-//            Log.v(GFUtil.TAG, "DisplayDormitoryBattery : $displayDormitoryBattery")
-            Log.v(GFUtil.TAG, "InjectAllSkins : " + GfData.options.injectAllSkins())
-            Log.v(GFUtil.TAG, "DisplayDormitoryBattery : " + GfData.options.displayDorimitoryBattery())
-        }
+
         // Json test
         if (false) {
             val str1 = """ { "key1":"val1", "key2":"val2" } """

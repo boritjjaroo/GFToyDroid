@@ -4,12 +4,22 @@
 
         <CheckBoxPreference
             app:title="@string/inject_all_skins"
-            app:key="InjectAllSkins"
+            app:key="@string/key_inject_all_skins"
+            app:defaultValue="false"
+            />
+        <CheckBoxPreference
+            app:title="@string/use_private_adjutant"
+            app:key="@string/key_use_private_adjutant"
+            app:defaultValue="false"
+            />
+        <CheckBoxPreference
+            app:title="@string/use_private_gun_skin"
+            app:key="@string/key_use_private_gun_skin"
             app:defaultValue="false"
             />
         <CheckBoxPreference
             app:title="@string/display_dormitory_battery"
-            app:key="DisplayDormitoryBattery"
+            app:key="@string/key_display_dormitory_battery"
             app:defaultValue="false"
             />
 

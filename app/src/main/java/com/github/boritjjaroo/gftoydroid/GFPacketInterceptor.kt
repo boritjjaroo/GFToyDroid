@@ -39,9 +39,12 @@ class GFPacketInterceptor : SimpleHttpInjector() {
 
     @Throws(IOException::class)
     override fun onRequestInject(header: HttpRequestHeaderPart, callback: InjectorCallback) {
-        val contentLength = Handler.handleRequestHeader(header.uri().toString())
-        if (0 <= contentLength) {
-            val newHeader = header.newBuilder().replaceHeader("Content-Length", contentLength.toString()).build()
+        val result = Handler.handleRequestHeader(header.uri().toString())
+        if (0 < result) {
+            val builder = header.newBuilder()
+            builder.removeHeader("Content-Length")
+            builder.addHeader("Transfer-Encoding", "chunked")
+            val newHeader = builder.build()
             callback.onFinished(newHeader)
         }
         else {
@@ -52,9 +55,21 @@ class GFPacketInterceptor : SimpleHttpInjector() {
     @Throws(IOException::class)
     override fun onRequestInject(request: HttpRequest, body: HttpBody, callback: InjectorCallback) {
         Log.v(GFUtil.TAG, "Interceptor::onRequestInject(body) : " + request.url())
-        val modifiedBody = Handler.handleRequestBody(request.url(), body.toBuffer().array())
-        if (modifiedBody != null) {
-            callback.onFinished(BufferStream(ByteBuffer.wrap(modifiedBody)))
+        val headers = request.requestHeader("Transfer-Encoding")
+        val chunked = headers != null && headers.size == 1 && headers[0].equals("chunked")
+        var modifiedBody = Handler.handleRequestBody(request.url(), body.toBuffer().array())
+
+        if (chunked && modifiedBody == null)
+            modifiedBody = body.toBuffer().array()
+
+        if (chunked) {
+            val outputStream = ByteArrayOutputStream()
+            val chunkedOutputStream = ChunkedOutputStream(outputStream)
+            chunkedOutputStream.write(modifiedBody)
+            chunkedOutputStream.finish()
+            val chunkedBody = outputStream.toByteArray()
+            outputStream.close()
+            callback.onFinished(BufferStream(ByteBuffer.wrap(chunkedBody)))
         }
         else {
             callback.onFinished(body)
@@ -109,7 +124,7 @@ class GFPacketInterceptor : SimpleHttpInjector() {
                 inputStream.close()
 
                 Log.v(GFUtil.TAG, "Data Size : " + responseByteArray.size)
-                val url = this.responseHeader!!.uri().toString() ?: ""
+                val url = this.responseHeader!!.uri().toString()
 
                 val modifiedByteArray = Handler.handleRespose(url, responseByteArray)
 
@@ -132,23 +147,5 @@ class GFPacketInterceptor : SimpleHttpInjector() {
             // pass the original chunked data that is collected fully
             callback.onFinished(BufferStream(ByteBuffer.wrap(callbackByteArray)))
         }
-
-//                } else if(httpResponse.host().hostName.startsWith("sn-list") && header!!.uri().path.equals("/aNy0jv627jejqDIKgdldAlyQjnr7OExKF5k1daMC80I.txt")) {
-//                    try {
-//                        val outputStream = ByteArrayOutputStream()
-//                        val chunkedOutputStream = ChunkedOutputStream(outputStream)
-//                        val gzipOutputStream = GZIPOutputStream(chunkedOutputStream)
-//                        val file = FileInputStream(context.dataDir.absolutePath + "/update.bin")
-//                        gzipOutputStream.write(file.readBytes())
-//                        gzipOutputStream.finish()
-//                        chunkedOutputStream.finish()
-//                        newResponse = outputStream.toByteArray()
-//                        gzipOutputStream.close()
-//                    } catch (e: Throwable) {
-//                        e.printStackTrace()
-//                        return
-//                    }
-//
-//                }
     }
 }
