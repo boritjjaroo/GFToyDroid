@@ -6,8 +6,8 @@ interface GfDataRepository {
 
     class Key{
         companion object {
-            val AdjutantMulti = "AdjutantMulti"
-            val GunSkin = "GunSkin"
+            const val AdjutantMulti = "AdjutantMulti"
+            const val GunSkin = "GunSkin"
         }
     }
 

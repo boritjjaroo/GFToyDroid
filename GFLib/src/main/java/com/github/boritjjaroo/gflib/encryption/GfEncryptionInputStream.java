@@ -3,6 +3,7 @@ package com.github.boritjjaroo.gflib.encryption;
 import android.util.Log;
 
 import com.github.boritjjaroo.gflib.GFUtil;
+import com.github.boritjjaroo.gflib.data.GfData;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -58,7 +59,7 @@ public class GfEncryptionInputStream extends InputStream implements AutoCloseabl
         this.date = new Date(Long.parseLong(new String(date)));
 
         if (!Arrays.equals(generatedCheck, check)) {
-            Log.e(GFUtil.Companion.getTAG(), "check doesn't match");
+            GfData.log.w("check doesn't match");
         }
 
         this.in = new ByteArrayInputStream(rawData,26,rawData.length - 26);

@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.res.AssetManager
 import android.util.Log
 import androidx.preference.PreferenceManager
-import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
+import com.github.boritjjaroo.gflib.data.GfLog
 import com.github.boritjjaroo.gflib.data.GfOptions
 import com.github.megatronking.netbare.NetBare
 import com.github.megatronking.netbare.NetBareConfig
@@ -16,9 +16,10 @@ import com.github.megatronking.netbare.http.HttpInterceptorFactory
 import com.github.megatronking.netbare.ssl.JKS
 import me.weishu.reflection.Reflection
 
-class App : Application(), GfOptions {
+class App : Application(), GfOptions, GfLog {
     companion object {
         const val JSK_ALIAS = "GFToyDroid"
+        val TAG = "GFToy"
 
         private lateinit var sInstance: App
 
@@ -39,10 +40,11 @@ class App : Application(), GfOptions {
 
         sInstance = this
         GfData.options = this
+        GfData.log = this
         mNetBare = NetBare.get()
 
         if (mNetBare.isActive) {
-            Log.w(GFUtil.TAG, "NetBare is running on app start!!!")
+            w("NetBare is running on app start!!!")
             stopNetBare()
         }
 
@@ -69,7 +71,7 @@ class App : Application(), GfOptions {
         }
     }
 
-    override fun displayDorimitoryBattery(): Boolean {
+    override fun displayDormitoryBattery(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         return prefs.getBoolean(getString(R.string.key_display_dormitory_battery), false)
     }
@@ -92,6 +94,15 @@ class App : Application(), GfOptions {
     override fun releaseCensorship(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         return prefs.getBoolean(getString(R.string.key_release_censorship), false)
+    }
+
+    override fun logUnknownPacketData(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean(getString(R.string.key_log_unknown_packet_data), false)
+    }
+
+    override fun put(priority: Int, msg: String) {
+        Log.println(priority, TAG, msg)
     }
 
     fun prepareNetBare() {

@@ -1,8 +1,7 @@
 package com.github.boritjjaroo.gflib.packet
 
 import android.net.Uri
-import android.util.Log
-import com.github.boritjjaroo.gflib.GFUtil
+import com.github.boritjjaroo.gflib.data.GfData
 
 
 open class GfRequestPacket : GfPacket() {
@@ -28,7 +27,7 @@ open class GfRequestPacket : GfPacket() {
 
         val newQuery = builder.build().encodedQuery
         if (newQuery == null) {
-            Log.e(GFUtil.TAG, "Failed to replaceParam() so return original query!!!")
+            GfData.log.e("Failed to replaceParam() so return original query!!!")
         }
         return newQuery ?: query
     }

@@ -1,8 +1,6 @@
 package com.github.boritjjaroo.gflib.packet
 
 import android.net.Uri
-import android.util.Log
-import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
 
 class ChangeSkinRequest : GfRequestPacket() {
@@ -17,7 +15,7 @@ class ChangeSkinRequest : GfRequestPacket() {
     override fun processBody(data: ByteArray) : ByteArray? {
         super.processBody(data)
 
-        Log.v(GFUtil.TAG, "ChangeSkinRequest:process()")
+        GfData.log.v("ChangeSkinRequest:processBody()")
 
         // Block change
         // Send original(unchanged) data instead
@@ -31,7 +29,7 @@ class ChangeSkinRequest : GfRequestPacket() {
                 val gunId = json.get("gun_with_user_id").asInt
                 val skinId = json.get("skin_id").asInt
                 GfData.gun.replaceGunSkinAndSave(gunId, skinId)
-                Log.i(GFUtil.TAG, "Private gun's skin info are saved.")
+                GfData.log.i("Private gun's skin info are saved.")
 
                 // Send user_info's gun_with_user_info data instead
                 val reqId = uri.getQueryParameter("req_id")
@@ -41,7 +39,7 @@ class ChangeSkinRequest : GfRequestPacket() {
                     val newData = GfData.session.encrpytGFData(newJsonStr, false, false)
                     val queryStr = "uid=${GfData.userInfo.userId}&outdatacode=dummy&req_id=$reqId"
                     val newQuery = replaceParam(queryStr, "outdatacode", String(newData))
-                    Log.i(GFUtil.TAG, "Changed to user_info's gun_skin data.")
+                    GfData.log.i("Changed to user_info's gun_skin data.")
                     return newQuery.toByteArray()
                 }
             } catch (e: Exception) {

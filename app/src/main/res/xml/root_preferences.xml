@@ -25,6 +25,16 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/logging">
+
+        <CheckBoxPreference
+            app:title="@string/log_unknown_packet_data"
+            app:key="@string/key_log_unknown_packet_data"
+            app:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/etc">
 
         <CheckBoxPreference

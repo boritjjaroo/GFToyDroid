@@ -1,18 +1,19 @@
 package com.github.boritjjaroo.gflib.packet
 
 import android.net.Uri
-import android.util.Log
-import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
 
 class UnknownRequest : GfRequestPacket() {
     override fun processBody(data: ByteArray) : ByteArray? {
         super.processBody(data)
 
-        //Log.v(GFUtil.TAG, "UnknownRequest:process()")
-        Log.v(GFUtil.TAG, "params :\n" + GFUtil.byteArrayToUTF8(data))
+        if (!GfData.options.logUnknownPacketData())
+            return null
 
-        val uri = Uri.parse("http://dummy.host/path?" + GFUtil.byteArrayToUTF8(data))
+        GfData.log.v("UnknownRequest:process()")
+        GfData.log.v("params :\n" + String(data))
+
+        val uri = Uri.parse("http://dummy.host/path?" + String(data))
         val reqId = uri.getQueryParameter("req_id")
         if (reqId != null) {
             GfData.session.reqId = reqId
@@ -20,12 +21,12 @@ class UnknownRequest : GfRequestPacket() {
         val signcode = uri.getQueryParameter("signcode")
         if (signcode != null) {
             val byteArray = GfData.session.decryptGFDataRaw(signcode.toByteArray())
-            Log.v(GFUtil.TAG, "signcode : " + GFUtil.byteArrayToUTF8(byteArray))
+            GfData.log.v("signcode : " + String(byteArray))
         }
         val outdatacode = uri.getQueryParameter("outdatacode")
         if (outdatacode != null) {
             val json = GfData.session.decryptGFData(outdatacode.toByteArray())
-            Log.v(GFUtil.TAG, "outdatacode :\n$json")
+            GfData.log.v("outdatacode :\n$json")
         }
 
         return null

@@ -1,8 +1,6 @@
 package com.github.boritjjaroo.gflib.packet
 
 import android.net.Uri
-import android.util.Log
-import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
 
 class AdjutantRequest : GfRequestPacket() {
@@ -18,7 +16,7 @@ class AdjutantRequest : GfRequestPacket() {
     override fun processBody(data: ByteArray) : ByteArray? {
         super.processBody(data)
 
-        Log.v(GFUtil.TAG, "AdjutantRequest:process()")
+        GfData.log.v("AdjutantRequest:processBody()")
 
         // Block adjutant change
         // Send original(unchanged) data instead
@@ -30,13 +28,13 @@ class AdjutantRequest : GfRequestPacket() {
                 val json = GfData.session.decryptGFData(outdatacode!!.toByteArray())
                 val jsonString = json.get("adjutant_multi").asString
                 GfData.repository.putAdjutantMulti(jsonString)
-                Log.i(GFUtil.TAG, "Private adjutant info are saved.")
+                GfData.log.i("Private adjutant info are saved.")
 
                 // Send user_info's adjutant_multi data instead
                 val reqId = uri.getQueryParameter("req_id")
                 if (reqId != null) {
                     val newQuery = generateFakeQueryData(reqId)
-                    Log.i(GFUtil.TAG, "Changed to user_info's adjutant_multi data.")
+                    GfData.log.i("Changed to user_info's adjutant_multi data.")
                     return newQuery.toByteArray()
                 }
             } catch (e: Exception) {

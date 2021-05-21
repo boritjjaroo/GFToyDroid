@@ -1,7 +1,5 @@
 package com.github.boritjjaroo.gflib.packet
 
-import android.util.Log
-import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
 
 class FriendVisitResponse : GfResponsePacket() {
@@ -13,10 +11,11 @@ class FriendVisitResponse : GfResponsePacket() {
     override fun process(data: ByteArray) : ByteArray? {
         super.process(data)
 
-        if (GfData.options.displayDorimitoryBattery()) {
+        GfData.log.v("FriendVisitResponse:process()")
+
+        if (GfData.options.displayDormitoryBattery()) {
             if (isEncrypted(data)) {
                 val json = GfData.session.decryptGFData(data)
-                //GFUtil.logV(GFUtil.TAG, "json :\n" + json.toString())
                 val coin = json.get("build_coin_flag").asInt
                 var notice = ""
                 val jsonNotice = json.getAsJsonObject("notice")
@@ -28,7 +27,7 @@ class FriendVisitResponse : GfResponsePacket() {
                 jsonNotice.addProperty("is_view_notice", "1")
                 jsonNotice.addProperty("notice", newNotice)
                 val modifiedData = GfData.session.encrpytGFData(json.toString(), true, true)
-                Log.i(GFUtil.TAG, "Dormitory notice is modified.")
+                GfData.log.i("Dormitory notice is modified.")
                 return modifiedData
             }
         }

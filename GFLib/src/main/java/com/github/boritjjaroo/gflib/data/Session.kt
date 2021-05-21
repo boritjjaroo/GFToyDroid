@@ -30,7 +30,6 @@ class Session() {
     }
 
     fun decryptGFData(gfData: ByteArray, sign: Sign) : JsonObject {
-        //Log.i(GFUtil.TAG, "gfData : \n" + GFUtil.byteBufferToUTF8(ByteBuffer.wrap(gfData)))
 
         var data = JsonObject()
 
@@ -56,9 +55,8 @@ class Session() {
             data = JsonParser.parseReader(bufferedReader) as JsonObject
             this.date = inputStream.date
         } catch (e: Exception) {
-            Log.w(GFUtil.TAG, "Session::decryptGFData() failed")
-            Log.e(GFUtil.TAG, e.toString())
-            Log.e(GFUtil.TAG, e.stackTraceToString())
+            GfData.log.w("Session::decryptGFData() failed")
+            GfData.log.w(e.toString())
         }
 
         return data
@@ -69,7 +67,6 @@ class Session() {
     }
 
     fun decryptGFDataRaw(gfData: ByteArray, sign: Sign) : ByteArray {
-        //Log.i(GFUtil.TAG, "gfData : \n" + GFUtil.byteBufferToUTF8(ByteBuffer.wrap(gfData)))
 
         var byteArray = ByteArray(1)
 
@@ -95,9 +92,8 @@ class Session() {
             inputStream.close()
             this.date = inputStream.date
         } catch (e: Exception) {
-            Log.w(GFUtil.TAG, "Session::decryptGFData() failed")
-            Log.e(GFUtil.TAG, e.toString())
-            Log.e(GFUtil.TAG, e.stackTraceToString())
+            GfData.log.w("Session::decryptGFData() failed")
+            GfData.log.w(e.toString())
         }
 
         return byteArray

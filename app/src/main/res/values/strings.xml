@@ -28,4 +28,8 @@
     <string name="release_censorship">Release Censorship</string>
     <string name="key_release_censorship">ReleaseCensorship</string>
     <string name="release_censorship_summary">Build a doll with (30,30,30,30) and restart.</string>
+    <string name="refresh">Refresh</string>
+    <string name="logging">Logging</string>
+    <string name="log_unknown_packet_data">Log unknown packet data</string>
+    <string name="key_log_unknown_packet_data">LogUnknownPacketData</string>
 </resources>

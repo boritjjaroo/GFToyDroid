@@ -1,7 +1,5 @@
 package com.github.boritjjaroo.gflib.data
 
-import android.util.Log
-import com.github.boritjjaroo.gflib.GFUtil
 import com.google.gson.JsonObject
 
 class Gun() {
@@ -35,7 +33,7 @@ class Gun() {
     fun loadPrivateGunSkin(): MutableMap<Int, Int> {
         var map = mutableMapOf<Int, Int>()
         val data = GfData.repository.getGunSkin()
-        //Log.v(GFUtil.TAG, "gun_skin data : \n$data")
+        //GfLog.log.v("gun_skin data loaded : \n$data")
         data?.split(',')?.filter { item -> item.isNotEmpty() }?.forEach { item ->
             val gunSkin = item.split(':')
             if (gunSkin.size == 2) {
@@ -50,7 +48,7 @@ class Gun() {
         map.forEach { (gunId, skinId) ->
             data += "$gunId:$skinId,"
         }
-        //Log.v(GFUtil.TAG, "gun_skin data : \n$data")
+        GfData.log.i("private gun_skin data is saved : \n$data")
         GfData.repository.putGunSkin(data)
     }
 
@@ -66,6 +64,6 @@ class Gun() {
                                     jsonGun.asJsonObject["skin"].asInt)
             guns.put(gunItem.id, gunItem)
         }
-        Log.i(GFUtil.TAG, "user_info's ${guns.size} guns data loaded.")
+        GfData.log.i("user_info's ${guns.size} guns data loaded.")
     }
 }

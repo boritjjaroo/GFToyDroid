@@ -11,10 +11,6 @@ class Skin {
     var mySkins = mutableMapOf<Int, Int>()
     var skinDatas = mutableMapOf<Int, SkinData>()
 
-    fun hasSkin(id: Int) : Boolean {
-        return mySkins.contains(id)
-    }
-
     fun init() {
         mySkins.clear()
     }
@@ -55,7 +51,6 @@ class Skin {
             val jsonSkin = entry.value.generateJsonSkinWithUserInfo()
             json.add(entry.key.toString(), jsonSkin)
         }
-        //Log.v(GFUtil.TAG, "json : \n$json")
         return json
     }
 }

@@ -1,7 +1,5 @@
 package com.github.boritjjaroo.gflib.packet
 
-import android.util.Log
-import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.data.GfData
 
 class UserInfoResponse : GfResponsePacket() {
@@ -13,13 +11,12 @@ class UserInfoResponse : GfResponsePacket() {
     override fun process(data: ByteArray) : ByteArray? {
         super.process(data)
 
-        //Log.v(GFUtil.TAG, "UserInfoResponse:process()")
-        //Log.v(GFUtil.TAG, "data :\n" + GFUtil.byteArrayToUTF8(data))
+        GfData.log.v("UserInfoResponse:process()")
 
         assert(isEncrypted(data))
         var modified = false
         val json = GfData.session.decryptGFData(data)
-        //Log.v(GFUtil.TAG, "json :\n$json")
+        //GfData.log.v("json :\n$json")
 
         GfData.userInfo.parseJson(json)
         GfData.adjutantMulti.parseJsonUserInfo(json)
@@ -49,7 +46,7 @@ class UserInfoResponse : GfResponsePacket() {
                 GfData.adjutantMulti.parseJsonString(adjutantMultiData)
                 val jsonAdjutant = GfData.adjutantMulti.generateJsonUserAdjutantMulti()
                 json.add("user_adjutant_multi", jsonAdjutant)
-                Log.i(GFUtil.TAG, "Load private adjutant info.")
+                GfData.log.i("Load private adjutant info.")
                 modified = true
             }
         }
@@ -60,12 +57,12 @@ class UserInfoResponse : GfResponsePacket() {
             json.add("skin_with_user_info", newJsonSkin)
             GfData.isAllSkinInjected = true
             modified = true
-            Log.i(GFUtil.TAG, "All skin infos are injected.")
+            GfData.log.i("All skin infos are injected.")
         }
 
         if (GfData.options.releaseCensorship()) {
             json.addProperty("naive_build_gun_formula", "30:30:30:30")
-            Log.i(GFUtil.TAG, "\"naive_build_gun_formula\":\"30:30:30:30\" injected.")
+            GfData.log.i("\"naive_build_gun_formula\":\"30:30:30:30\" injected.")
             modified = true
         }
 
