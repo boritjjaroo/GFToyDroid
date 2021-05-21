@@ -5,4 +5,5 @@ interface GfOptions {
     fun injectAllSkins() : Boolean
     fun usePrivateAdjutant() : Boolean
     fun usePrivateGunSkin() : Boolean
+    fun releaseCensorship() : Boolean
 }

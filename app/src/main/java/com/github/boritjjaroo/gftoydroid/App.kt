@@ -89,6 +89,11 @@ class App : Application(), GfOptions {
         return prefs.getBoolean(getString(R.string.key_use_private_gun_skin), false)
     }
 
+    override fun releaseCensorship(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean(getString(R.string.key_release_censorship), false)
+    }
+
     fun prepareNetBare() {
         // NetBare 서비스 시작
         val configBuilder = NetBareConfig.defaultHttpConfig(mJKS,

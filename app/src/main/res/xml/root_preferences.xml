@@ -25,4 +25,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory app:title="@string/etc">
+
+        <CheckBoxPreference
+            app:title="@string/release_censorship"
+            app:key="@string/key_release_censorship"
+            app:defaultValue="false"
+            app:summary="@string/release_censorship_summary"
+            />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

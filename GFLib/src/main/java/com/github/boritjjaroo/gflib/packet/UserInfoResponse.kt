@@ -25,6 +25,7 @@ class UserInfoResponse : GfResponsePacket() {
         GfData.adjutantMulti.parseJsonUserInfo(json)
         GfData.gun.parseJsonUserInfo(json)
         GfData.skin.parseJsonUserInfo(json)
+        GfData.hexie = json.get("hexie")?.asInt ?: 0
 
         if (GfData.options.usePrivateGunSkin()) {
             val map = GfData.gun.loadPrivateGunSkin()
@@ -60,6 +61,12 @@ class UserInfoResponse : GfResponsePacket() {
             GfData.isAllSkinInjected = true
             modified = true
             Log.i(GFUtil.TAG, "All skin infos are injected.")
+        }
+
+        if (GfData.options.releaseCensorship()) {
+            json.addProperty("naive_build_gun_formula", "30:30:30:30")
+            Log.i(GFUtil.TAG, "\"naive_build_gun_formula\":\"30:30:30:30\" injected.")
+            modified = true
         }
 
         if (modified) {

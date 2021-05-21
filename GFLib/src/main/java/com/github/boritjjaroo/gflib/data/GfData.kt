@@ -17,10 +17,14 @@ object GfData {
 
     var isAllSkinInjected: Boolean = false
 
+    // release censorship for china server
+    var hexie: Int = 0
+
     fun init() {
         session.init()
         gun.init()
         skin.init()
         isAllSkinInjected = false
+        hexie = 0
     }
 }

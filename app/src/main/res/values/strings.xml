@@ -24,4 +24,8 @@
     <string name="key_inject_all_skins">InjectAllSkins</string>
     <string name="key_display_dormitory_battery">DisplayDormitoryBattery</string>
     <string name="key_use_private_gun_skin">UsePrivateGunSkin</string>
+    <string name="etc">Etc</string>
+    <string name="release_censorship">Release Censorship</string>
+    <string name="key_release_censorship">ReleaseCensorship</string>
+    <string name="release_censorship_summary">Build a doll with (30,30,30,30) and restart.</string>
 </resources>
