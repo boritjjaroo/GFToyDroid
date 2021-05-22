@@ -1,6 +1,6 @@
 package com.github.boritjjaroo.gflib.data
 
-import java.util.*
+import android.text.format.DateFormat
 
 
 object GfData {
@@ -43,9 +43,13 @@ object GfData {
     }
 
     fun getStatus() : String {
+        val loginTimeStr = DateFormat.format(
+            "yyyy-MM-dd E a hh:mm:ss",
+            userInfo.lastLoginTime * 1000L).toString()
+
         var str = ""
         str += "user_id\n  ${userInfo.userId}\n\n"
-        str += "last_login_time\n  ${Date(userInfo.lastLoginTime)}\n\n"
+        str += "last_login_time\n  $loginTimeStr\n\n"
         str += "isAllSkinInjected\n  ${isAllSkinInjected}\n\n"
         return str
     }

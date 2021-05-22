@@ -14,14 +14,29 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
-import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
 class GFPacketInterceptor(logger: GfLog) : SimpleHttpInjector() {
 
     companion object {
-        var lastInterceptTime = Date(0)
+        var lastInterceptTime:Long = 0
+
+        fun getElapsedTimeAfterLastPacket() : String {
+            val curTime = System.currentTimeMillis()
+            var diffTime = (curTime - lastInterceptTime) / 1000
+            var msg = ""
+            if (diffTime < 60) {
+                msg = "${diffTime}초 전"
+            }
+            else if (diffTime < 60 * 60) {
+                msg = "${diffTime / 60}분 ${diffTime % 60}초 전"
+            }
+            else {
+                msg = "${diffTime / (60 * 60)}시간 ${(diffTime / 60) % 60}분 ${((diffTime / 60) / 60) % 60}초 전"
+            }
+            return msg
+        }
     }
 
     private var log: GfLog
@@ -33,13 +48,13 @@ class GFPacketInterceptor(logger: GfLog) : SimpleHttpInjector() {
     }
 
     override fun sniffRequest(request: HttpRequest): Boolean {
-        lastInterceptTime = Date()
+        lastInterceptTime = System.currentTimeMillis()
         log.v("Interceptor::sniffRequest() : " + request.url())
         return true
     }
 
     override fun sniffResponse(response: HttpResponse): Boolean {
-        lastInterceptTime = Date()
+        lastInterceptTime = System.currentTimeMillis()
         log.v("Interceptor::sniffResponse() : " + response.url())
         return Handler.sniffResponse(response.url())
     }

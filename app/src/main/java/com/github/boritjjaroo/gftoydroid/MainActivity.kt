@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -27,6 +28,7 @@ import com.github.megatronking.netbare.http.HttpInterceptorFactory
 import com.github.megatronking.netbare.ssl.JKS
 import com.google.gson.JsonParser
 import java.io.IOException
+import java.util.*
 
 class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener, GfDataRepository, GfLog {
 
@@ -221,15 +223,24 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener,
         )
         var status = GfData.getStatus()
         status += "VPN Server\n  ${mNetBare.isActive}\n\n"
-        status += "LastPacketTime\n  ${GFPacketInterceptor.lastInterceptTime}"
+        status += "LastPacketTime\n  ${GFPacketInterceptor.getElapsedTimeAfterLastPacket()}"
         mTextView.text = status
     }
 
     private fun test() {
 
         if (true) {
-            put(GfLog.TOAST or Log.INFO, "Hello")
+            GFPacketInterceptor.lastInterceptTime = System.currentTimeMillis() - 787483 * 1000
+            i(GFPacketInterceptor.getElapsedTimeAfterLastPacket())
+            GFPacketInterceptor.lastInterceptTime = System.currentTimeMillis() - 1784 * 1000
+            i(GFPacketInterceptor.getElapsedTimeAfterLastPacket())
+            GFPacketInterceptor.lastInterceptTime = System.currentTimeMillis() - 48 * 1000
+            i(GFPacketInterceptor.getElapsedTimeAfterLastPacket())
+
+            val date = Date(1620981375L * 1000L)
+            i(DateFormat.format("yyyy-MM-dd E a hh:mm:ss", date).toString())
         }
+
         // Uri Builder test
         if (false) {
             val builder = Uri.Builder()
