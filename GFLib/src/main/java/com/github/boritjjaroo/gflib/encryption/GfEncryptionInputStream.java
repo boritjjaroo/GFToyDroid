@@ -59,7 +59,7 @@ public class GfEncryptionInputStream extends InputStream implements AutoCloseabl
         this.date = new Date(Long.parseLong(new String(date)));
 
         if (!Arrays.equals(generatedCheck, check)) {
-            GfData.log.w("check doesn't match");
+            GfData.log.w("check doesn't match", 0);
         }
 
         this.in = new ByteArrayInputStream(rawData,26,rawData.length - 26);

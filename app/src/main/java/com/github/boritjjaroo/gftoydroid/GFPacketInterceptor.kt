@@ -1,5 +1,6 @@
 package com.github.boritjjaroo.gftoydroid
 
+import com.github.boritjjaroo.gflib.data.GfLog
 import com.github.boritjjaroo.gflib.packet.Handler
 import com.github.megatronking.netbare.http.*
 import com.github.megatronking.netbare.injector.InjectorCallback
@@ -17,25 +18,29 @@ import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
-class GFPacketInterceptor : SimpleHttpInjector() {
+class GFPacketInterceptor(logger: GfLog) : SimpleHttpInjector() {
 
     companion object {
         var lastInterceptTime = Date(0)
     }
 
+    private var log: GfLog
     private var responseHeader: HttpResponseHeaderPart? = null
     private var responseBuffer: ByteArrayOutputStream? = null
 
+    init {
+        this.log = logger
+    }
 
     override fun sniffRequest(request: HttpRequest): Boolean {
         lastInterceptTime = Date()
-        App.getInstance().v("Interceptor::sniffRequest() : " + request.url())
+        log.v("Interceptor::sniffRequest() : " + request.url())
         return true
     }
 
     override fun sniffResponse(response: HttpResponse): Boolean {
         lastInterceptTime = Date()
-        App.getInstance().v("Interceptor::sniffResponse() : " + response.url())
+        log.v("Interceptor::sniffResponse() : " + response.url())
         return Handler.sniffResponse(response.url())
     }
 
@@ -56,7 +61,7 @@ class GFPacketInterceptor : SimpleHttpInjector() {
 
     @Throws(IOException::class)
     override fun onRequestInject(request: HttpRequest, body: HttpBody, callback: InjectorCallback) {
-        App.getInstance().v("Interceptor::onRequestInject(body) : " + request.url())
+        log.v("Interceptor::onRequestInject(body) : " + request.url())
         val headers = request.requestHeader("Transfer-Encoding")
         val chunked = headers != null && headers.size == 1 && headers[0].equals("chunked")
         var modifiedBody = Handler.handleRequestBody(request.url(), body.toBuffer().array())
@@ -80,7 +85,7 @@ class GFPacketInterceptor : SimpleHttpInjector() {
 
     @Throws(IOException::class)
     override fun onResponseInject(header: HttpResponseHeaderPart, callback: InjectorCallback) {
-        App.getInstance().v("onResponseInject(header) : " + header.uri().toString())
+        log.v("onResponseInject(header) : " + header.uri().toString())
         this.responseHeader = header
         this.responseBuffer = ByteArrayOutputStream()
         callback.onFinished(header)
@@ -88,7 +93,7 @@ class GFPacketInterceptor : SimpleHttpInjector() {
 
     @Throws(IOException::class)
     override fun onResponseInject(httpResponse: HttpResponse, body: HttpBody, callback: InjectorCallback) {
-        App.getInstance().v("onResponseInject(body)")
+        log.v("onResponseInject(body)")
 
         var isResponseBufferReady = false
         var isChunked = false
@@ -125,7 +130,7 @@ class GFPacketInterceptor : SimpleHttpInjector() {
                 val responseByteArray = IOUtils.toByteArray(inputStream)
                 inputStream.close()
 
-                App.getInstance().v("Data Size : " + responseByteArray.size)
+                log.v("Data Size : " + responseByteArray.size)
                 val url = this.responseHeader!!.uri().toString()
 
                 val modifiedByteArray = Handler.handleRespose(url, responseByteArray)
@@ -142,7 +147,7 @@ class GFPacketInterceptor : SimpleHttpInjector() {
                 }
 
             } catch (e : Exception) {
-                App.getInstance().e(e.toString())
+                log.e(e.toString())
             }
 
             // pass the original chunked data that is collected fully

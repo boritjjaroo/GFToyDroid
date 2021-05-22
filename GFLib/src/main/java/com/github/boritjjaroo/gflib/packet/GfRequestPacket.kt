@@ -31,4 +31,11 @@ open class GfRequestPacket : GfPacket() {
         }
         return newQuery ?: query
     }
+
+    fun generateFakeQueryData(jsonStr: String, reqId: String) : String {
+        val newData = GfData.session.encrpytGFData(jsonStr, false, false)
+        val queryStr = "uid=${GfData.userInfo.userId}&outdatacode=dummy&req_id=$reqId"
+        val newQuery = replaceParam(queryStr, "outdatacode", String(newData))
+        return newQuery
+    }
 }

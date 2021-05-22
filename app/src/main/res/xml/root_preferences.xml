@@ -33,6 +33,15 @@
             app:defaultValue="false"
             />
 
+        <ListPreference
+            app:title="@string/log_level"
+            app:key="@string/key_log_level"
+            app:entries="@array/array_log_level"
+            app:entryValues="@array/array_log_level_values"
+            app:defaultValue="0"
+            app:summary="%s"
+            />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/etc">

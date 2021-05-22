@@ -2,6 +2,7 @@ package com.github.boritjjaroo.gflib.packet
 
 import android.net.Uri
 import com.github.boritjjaroo.gflib.data.GfData
+import com.github.boritjjaroo.gflib.data.GfLog
 
 class AdjutantRequest : GfRequestPacket() {
 
@@ -33,8 +34,9 @@ class AdjutantRequest : GfRequestPacket() {
                 // Send user_info's adjutant_multi data instead
                 val reqId = uri.getQueryParameter("req_id")
                 if (reqId != null) {
-                    val newQuery = generateFakeQueryData(reqId)
-                    GfData.log.i("Changed to user_info's adjutant_multi data.")
+                    val newJsonStr = "{\"adjutant_multi\":\"${GfData.adjutantMulti.requestString}\"}"
+                    val newQuery = generateFakeQueryData(newJsonStr, reqId)
+                    GfData.log.i("Changed to user_info's adjutant_multi data.", GfLog.TOAST)
                     return newQuery.toByteArray()
                 }
             } catch (e: Exception) {
@@ -42,13 +44,5 @@ class AdjutantRequest : GfRequestPacket() {
         }
 
         return null
-    }
-
-    private fun generateFakeQueryData(reqId: String) : String {
-        val newJsonStr = "{\"adjutant_multi\":\"${GfData.adjutantMulti.requestString}\"}"
-        val newData = GfData.session.encrpytGFData(newJsonStr, false, false)
-        val queryStr = "uid=${GfData.userInfo.userId}&outdatacode=dummy&req_id=$reqId"
-        val newQuery = replaceParam(queryStr, "outdatacode", String(newData))
-        return newQuery
     }
 }

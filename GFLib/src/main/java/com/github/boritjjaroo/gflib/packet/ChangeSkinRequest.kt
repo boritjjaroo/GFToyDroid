@@ -2,6 +2,7 @@ package com.github.boritjjaroo.gflib.packet
 
 import android.net.Uri
 import com.github.boritjjaroo.gflib.data.GfData
+import com.github.boritjjaroo.gflib.data.GfLog
 
 class ChangeSkinRequest : GfRequestPacket() {
     companion object {
@@ -36,10 +37,8 @@ class ChangeSkinRequest : GfRequestPacket() {
                 if (reqId != null) {
                     val originalSkinId = GfData.gun.getGunSkin(gunId)
                     val newJsonStr = "{\"gun_with_user_id\":$gunId,\"skin_id\":$originalSkinId}"
-                    val newData = GfData.session.encrpytGFData(newJsonStr, false, false)
-                    val queryStr = "uid=${GfData.userInfo.userId}&outdatacode=dummy&req_id=$reqId"
-                    val newQuery = replaceParam(queryStr, "outdatacode", String(newData))
-                    GfData.log.i("Changed to user_info's gun_skin data.")
+                    val newQuery = generateFakeQueryData(newJsonStr, reqId)
+                    GfData.log.i("Changed to user_info's gun_skin data.", GfLog.TOAST)
                     return newQuery.toByteArray()
                 }
             } catch (e: Exception) {
