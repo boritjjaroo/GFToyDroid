@@ -7,12 +7,16 @@ import com.github.boritjjaroo.gflib.data.GfLog
 // Request format
 // http://gf-game.girlfrontline.co.kr/index.php/1001/Index/crashLog
 // uid=1870807&outdatacode=encrypted(no#)&req_id=162165728100035
-//{
+// {
 //    "context": "尝试加载反和谐Live2D\n\nstart motion daiji_idle_01\n\nHit hitArea:leg\n\nstart motion touch_5\n\n尝试加载反和谐Live2D\n\nstart motion daiji_idle_01\n\nEnqueue: Dorm/changeSkin\t{\"gun_with_user_id\":419387148,\"skin_id\":5101}\nhttp://gf-game.girlfrontline.co.kr/index.php/1001/\n\nDequeue: Dorm/changeSkin\t{\"gun_with_user_id\":419387148,\"skin_id\":5101}\n162165728100034\n\n实例化数目0销毁数目0\n\nFunction：Dorm/changeSkin\tReceive: error:2\n\nDorm/changeSkin\nerror:2\n\n\n",
 //    "condition": "Dorm/changeSkin\n",
 //    "stackTrace": "error:2\n",
 //    "clientVersion": "2.0710_294"
-//}
+// }
+
+// Response
+// http://gf-game.girlfrontline.co.kr/index.php/1001/Index/crashLog
+// 1
 
 class CrashLogRequest : GfRequestPacket() {
 
