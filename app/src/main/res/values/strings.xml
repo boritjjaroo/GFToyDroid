@@ -17,12 +17,12 @@
 
     <!-- Packets Preferences -->
     <string name="inject_all_skins">Inject all skins</string>
-    <string name="display_dormitory_battery">Display dormitory battery</string>
+    <string name="display_friend_info">Display friend info</string>
     <string name="use_private_adjutant">Use private adjutant</string>
     <string name="use_private_gun_skin">Use private gun_skin</string>
     <string name="key_use_private_adjutant">UsePrivateAdjutant</string>
     <string name="key_inject_all_skins">InjectAllSkins</string>
-    <string name="key_display_dormitory_battery">DisplayDormitoryBattery</string>
+    <string name="key_display_friend_info">DisplayFriendInfo</string>
     <string name="key_use_private_gun_skin">UsePrivateGunSkin</string>
     <string name="etc">Etc</string>
     <string name="release_censorship">Release Censorship</string>
@@ -34,4 +34,5 @@
     <string name="key_log_unknown_packet_data">LogUnknownPacketData</string>
     <string name="log_level">Log level</string>
     <string name="key_log_level">LogLevel</string>
+    <string name="summary_friend_info">Dorm count, Battery count, Last visit</string>
 </resources>

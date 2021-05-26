@@ -47,9 +47,9 @@ class App : Application(), GfOptions {
         }
     }
 
-    override fun displayDormitoryBattery(): Boolean {
+    override fun displayFriendInfo(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        return prefs.getBoolean(getString(R.string.key_display_dormitory_battery), false)
+        return prefs.getBoolean(getString(R.string.key_display_friend_info), false)
     }
 
     override fun injectAllSkins(): Boolean {

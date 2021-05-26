@@ -6,7 +6,7 @@ class UserInfo {
     var userId = ""
     var lastLoginTime: Long = 0
 
-    fun init() {
+    fun initSession() {
         userId = ""
         lastLoginTime = 0
     }

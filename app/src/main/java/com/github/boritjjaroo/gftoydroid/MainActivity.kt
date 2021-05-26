@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, NetBareListener,
 
         GfData.log = this
         GfData.repository = this
+        GfData.init()
 
         mActionButton = findViewById(R.id.buttonStartVPN)
         mTextView = findViewById(R.id.textViewMsg)

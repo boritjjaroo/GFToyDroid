@@ -13,14 +13,24 @@ class FriendVisitResponse : GfResponsePacket() {
 
         GfData.log.v("FriendVisitResponse:process()")
 
-        if (GfData.options.displayDormitoryBattery()) {
+        val json = GfData.session.decryptGFData(data)
+        //GfData.log.v("json : \n${json.toString()}")
+
+        // Update dorm count info from battery count
+        val coin = json.get("build_coin_flag").asInt
+        if (0 < coin) {
+            val id = json.getAsJsonObject("info").get("f_userid").asInt
+            GfData.friends.updateDormCount(id, coin)
+        }
+
+        if (GfData.options.displayFriendInfo()) {
             if (isEncrypted(data)) {
-                val json = GfData.session.decryptGFData(data)
-                val coin = json.get("build_coin_flag").asInt
                 var notice = ""
                 val jsonNotice = json.getAsJsonObject("notice")
-                if (jsonNotice.get("notice") != null) {
-                    notice = jsonNotice.get("notice").asString
+                val jsonNoticePrimitive = jsonNotice.getAsJsonPrimitive("notice")
+                // CAUTION : case "notice":null is exist
+                if (jsonNoticePrimitive.isString) {
+                    notice = jsonNoticePrimitive.asString
                 }
                 val newNotice = "[$coin]$notice"
                 // Dormitory notice force on
@@ -31,6 +41,7 @@ class FriendVisitResponse : GfResponsePacket() {
                 return modifiedData
             }
         }
+
         return null
     }
 }

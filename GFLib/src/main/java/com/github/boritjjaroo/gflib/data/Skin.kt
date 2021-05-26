@@ -11,7 +11,7 @@ class Skin {
     var mySkins = mutableMapOf<Int, Int>()
     var skinDatas = mutableMapOf<Int, SkinData>()
 
-    fun init() {
+    fun initSession() {
         mySkins.clear()
     }
 

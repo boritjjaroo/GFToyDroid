@@ -17,10 +17,10 @@ class Gun() {
     private lateinit var guns: MutableMap<Int, GunItem>
 
     init {
-        init()
+        initSession()
     }
 
-    fun init() {
+    fun initSession() {
         guns = mutableMapOf<Int, GunItem>()
     }
 

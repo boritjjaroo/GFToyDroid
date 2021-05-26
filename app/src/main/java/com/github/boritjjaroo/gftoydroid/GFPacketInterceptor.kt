@@ -25,7 +25,7 @@ class GFPacketInterceptor(logger: GfLog) : SimpleHttpInjector() {
         fun getElapsedTimeAfterLastPacket() : String {
             val curTime = System.currentTimeMillis()
             var diffTime = (curTime - lastInterceptTime) / 1000
-            var msg = ""
+            var msg: String
             if (diffTime < 60) {
                 msg = "${diffTime}초 전"
             }

@@ -1,7 +1,7 @@
 package com.github.boritjjaroo.gflib.data
 
 interface GfOptions {
-    fun displayDormitoryBattery() : Boolean
+    fun displayFriendInfo() : Boolean
     fun injectAllSkins() : Boolean
     fun usePrivateAdjutant() : Boolean
     fun usePrivateGunSkin() : Boolean

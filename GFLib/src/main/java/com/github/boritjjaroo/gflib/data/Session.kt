@@ -1,7 +1,5 @@
 package com.github.boritjjaroo.gflib.data
 
-import android.util.Log
-import com.github.boritjjaroo.gflib.GFUtil
 import com.github.boritjjaroo.gflib.encryption.GfEncryptionInputStream
 import com.github.boritjjaroo.gflib.encryption.GfEncryptionOutputStream
 import com.github.boritjjaroo.gflib.encryption.Sign
@@ -16,10 +14,10 @@ class Session() {
     lateinit var reqId: String
 
     init {
-        init()
+        initSession()
     }
 
-    fun init() {
+    fun initSession() {
         sign = Sign("yundoudou")
         date = Date()
         reqId = "162098608400008"

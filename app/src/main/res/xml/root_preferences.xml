@@ -18,9 +18,10 @@
             app:defaultValue="false"
             />
         <CheckBoxPreference
-            app:title="@string/display_dormitory_battery"
-            app:key="@string/key_display_dormitory_battery"
+            app:title="@string/display_friend_info"
+            app:key="@string/key_display_friend_info"
             app:defaultValue="false"
+            app:summary="@string/summary_friend_info"
             />
 
     </PreferenceCategory>

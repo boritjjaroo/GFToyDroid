@@ -10,7 +10,7 @@ object GfData {
     lateinit var repository: GfDataRepository
 
     class DummyLog : GfLog {
-        override fun put(priority: Int, msg: String) {
+        override fun put(priorityEx: Int, msg: String) {
         }
     }
     @kotlin.jvm.JvmField
@@ -24,16 +24,23 @@ object GfData {
 
     var adjutantMulti: AdjutantMulti = AdjutantMulti()
 
+    var friends: Friends = Friends()
+
     var isAllSkinInjected: Boolean = false
 
     // release censorship for china server
     var hexie: Int = 0
 
     fun init() {
-        userInfo.init()
-        session.init()
-        gun.init()
-        skin.init()
+        friends.init()
+    }
+
+    fun initSession() {
+        userInfo.initSession()
+        session.initSession()
+        gun.initSession()
+        skin.initSession()
+        friends.initSession()
         isAllSkinInjected = false
         hexie = 0
     }

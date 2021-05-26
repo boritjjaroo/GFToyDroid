@@ -19,6 +19,9 @@ object Handler {
         GetUidResponse.ID to GetUidResponse(),
         UserInfoResponse.ID to UserInfoResponse(),
         FriendVisitResponse.ID to FriendVisitResponse(),
+        FriendListResponse.ID to FriendListResponse(),
+        FriendUserCardResponse.ID to FriendUserCardResponse(),
+        FriendDormInfoResponse.ID to FriendDormInfoResponse(),
     )
 
     fun sniffResponse(url: String) : Boolean {
@@ -28,15 +31,15 @@ object Handler {
         val path = uri.path
         if (!path!!.startsWith("/index.php"))
             return false
-        val (server, pathID) = parseUrl(url)
+        val (server, _) = parseUrl(url)
         return server == "1001"
         //return packets.containsKey(pathID)
     }
 
     fun handleRequestHeader(url: String) : Int {
-        val (server, pathID) = parseUrl(url)
+        val (_, pathID) = parseUrl(url)
         val packet = this.requestPackets[pathID]
-        var contentLength = -1
+        var contentLength: Int
 
         if (packet != null)
         {
@@ -50,7 +53,7 @@ object Handler {
     }
 
     fun handleRequestBody(url: String, query: ByteArray) : ByteArray? {
-        val (server, pathID) = parseUrl(url)
+        val (_, pathID) = parseUrl(url)
         val packet = this.requestPackets[pathID]
         val modifiedData : ByteArray?
 
@@ -66,7 +69,7 @@ object Handler {
     }
 
     fun handleRespose(url: String, packetData: ByteArray) : ByteArray? {
-        val (server, pathID) = parseUrl(url)
+        val (_, pathID) = parseUrl(url)
         val packet = this.responsePackets[pathID]
         val modifiedData : ByteArray?
 
