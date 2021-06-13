@@ -22,6 +22,8 @@ object GfData {
 
     var skin: Skin = Skin()
 
+    var target: Target = Target()
+
     var adjutantMulti: AdjutantMulti = AdjutantMulti()
 
     var friends: Friends = Friends()

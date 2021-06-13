@@ -21,8 +21,8 @@ class GFUtil {
             return result
         }
 
-        fun logV(tag: String, str: String) {
-            val MAX_LEN = 2000 // 2000 bytes 마다 끊어서 출력
+        fun logV(str: String) {
+            val MAX_LEN = 1000 // 2000 bytes 마다 끊어서 출력
             val len = str.length
             var idx = 0
             var nextIdx = 0

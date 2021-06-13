@@ -57,6 +57,11 @@ class App : Application(), GfOptions {
         return prefs.getBoolean(getString(R.string.key_inject_all_skins), false)
     }
 
+    override fun injectTargetInfo(): Boolean {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        return prefs.getBoolean(getString(R.string.key_inject_target_info), false)
+    }
+
     override fun usePrivateAdjutant(): Boolean {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         return prefs.getBoolean(getString(R.string.key_use_private_adjutant), false)
@@ -81,9 +86,14 @@ class App : Application(), GfOptions {
         val am: AssetManager = resources.assets
 
         try {
-            val input = am.open("skin.json")
-            val data = input.readBytes()
+            var input = am.open("skin.json")
+            var data = input.readBytes()
             GfData.skin.loadSkinData(data)
+            input.close()
+
+            input = am.open("target.json")
+            data = input.readBytes()
+            GfData.target.loadTargetData(data)
             input.close()
         } catch (e: Exception) {
             e.printStackTrace()

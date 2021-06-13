@@ -35,4 +35,6 @@
     <string name="log_level">Log level</string>
     <string name="key_log_level">LogLevel</string>
     <string name="summary_friend_info">Dorm count, Battery count, Last visit</string>
+    <string name="inject_target_info">Inject Target Info</string>
+    <string name="key_inject_target_info">InjectTargetInfo</string>
 </resources>

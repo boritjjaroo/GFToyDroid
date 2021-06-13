@@ -22,6 +22,7 @@ object Handler {
         FriendListResponse.ID to FriendListResponse(),
         FriendUserCardResponse.ID to FriendUserCardResponse(),
         FriendDormInfoResponse.ID to FriendDormInfoResponse(),
+        //FriendMessageListResponse.ID to FriendMessageListResponse(),
     )
 
     fun sniffResponse(url: String) : Boolean {

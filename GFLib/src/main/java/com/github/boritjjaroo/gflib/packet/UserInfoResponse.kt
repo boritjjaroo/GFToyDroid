@@ -16,7 +16,16 @@ class UserInfoResponse : GfResponsePacket() {
         assert(isEncrypted(data))
         var modified = false
         val json = GfData.session.decryptGFData(data)
-        //GfData.log.v("json :\n$json")
+
+        //json.remove("item_with_user_info")
+        //json.remove("equip_with_user_info")
+        //json.remove("furniture_collect_info")
+        //json.remove("fairy_with_user_info")
+        //json.remove("gun_with_user_info")
+        //json.remove("outhouse_establish_info")
+        //json.remove("chip_with_user_info")
+        //json.remove("sangvis_with_user_info")
+        //GFUtil.logV("json :\n$json")
 
         GfData.userInfo.parseJson(json)
         GfData.adjutantMulti.parseJsonUserInfo(json)
@@ -64,6 +73,13 @@ class UserInfoResponse : GfResponsePacket() {
             json.addProperty("naive_build_gun_formula", "30:30:30:30")
             GfData.log.i("\"naive_build_gun_formula\":\"30:30:30:30\" injected.")
             modified = true
+        }
+
+        if (GfData.options.injectTargetInfo()) {
+            val newTarget = GfData.target.generateJsonTargettrainCollectUserInfo();
+            json.add("targettrain_collect_user_info", newTarget)
+            modified = true
+            GfData.log.i("[] target data is injected.")
         }
 
         if (modified) {

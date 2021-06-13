@@ -23,6 +23,11 @@
             app:defaultValue="false"
             app:summary="@string/summary_friend_info"
             />
+        <CheckBoxPreference
+            app:title="@string/inject_target_info"
+            app:key="@string/key_inject_target_info"
+            app:defaultValue="false"
+            />
 
     </PreferenceCategory>
 

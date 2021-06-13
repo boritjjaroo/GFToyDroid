@@ -1,0 +1,24 @@
+{
+  "450100": [
+    { "order_id": "1", "enemy_team_id": "45010001", "description:": "니토" },
+    { "order_id": "2", "enemy_team_id": "45010002", "description:": "6건담,45스트렐치" },
+    { "order_id": "3", "enemy_team_id": "45010003", "description:": "2건담,2로델,25스트렐치" },
+    { "order_id": "4", "enemy_team_id": "45010004", "description:": "2건담,2로델,퍼니시,헤비거너" },
+    { "order_id": "5", "enemy_team_id": "45010005", "description:": "1글래디,헤비거너,스트렐치" },
+    { "order_id": "6", "enemy_team_id": "45010006", "description:": "1울란,3건담,2로델,스트렐치" },
+    { "order_id": "7", "enemy_team_id": "45010012", "description:": "3글래디,1로델,스트렐치" },
+    { "order_id": "8", "enemy_team_id": "45010013", "description:": "1울란,헤비거너,스트렐치" },
+    { "order_id": "9", "enemy_team_id": "45010014", "description:": "3케루브,스트렐치" },
+    { "order_id": "10", "enemy_team_id": "45010015", "description:": "1비슈뉴,스트렐치" },
+    { "order_id": "11", "enemy_team_id": "45010028", "description:": "1울란,3글래디,스트렐치" },
+    { "order_id": "12", "enemy_team_id": "45010029", "description:": "3로델,퍼니시,스트렐치" },
+    { "order_id": "13", "enemy_team_id": "45010030", "description:": "40헤비거너" },
+    { "order_id": "14", "enemy_team_id": "45010042", "description:": "6글래디,1비슈뉴" },
+    { "order_id": "15", "enemy_team_id": "45010047", "description:": "3울란,2건담,1글래디,2로델,스트렐치" },
+    { "order_id": "16", "enemy_team_id": "45010074", "description:": "3울란,2로델,퍼니시,스트렐치" },
+    { "order_id": "17", "enemy_team_id": "45010088", "description:": "2글래디,5로델,스트렐치" },
+    { "order_id": "18", "enemy_team_id": "45010089", "description:": "6글래디,퍼니시" },
+    { "order_id": "19", "enemy_team_id": "45010090", "description:": "2글래디,1케루브,3로델,퍼니시" },
+    { "order_id": "20", "enemy_team_id": "45010091", "description:": "1울란,2로델,스트렐치" }
+  ]
+}

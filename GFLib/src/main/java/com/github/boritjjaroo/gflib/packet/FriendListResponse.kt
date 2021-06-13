@@ -14,7 +14,7 @@ class FriendListResponse : GfResponsePacket() {
         GfData.log.v("FriendListResponse:process()")
 
         val json = GfData.session.decryptGFData(data)
-        //GfData.log.v("json : \n${json.toString()}")
+        //GFUtil.logV("json : \n${json.toString()}")
 
         GfData.friends.beginUpdate()
         val jsonArray = json.getAsJsonArray("list")

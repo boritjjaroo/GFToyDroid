@@ -14,7 +14,7 @@ class FriendDormInfoResponse : GfResponsePacket() {
         GfData.log.v("FriendDormInfoResponse:process()")
 
         val json = GfData.session.decryptGFData(data)
-        //GfData.log.v("json : \n${json.toString()}")
+        //GFUtil.logV("json : \n${json.toString()}")
 
         val jsonArray = json.getAsJsonArray("in_mydorm_list")
 
