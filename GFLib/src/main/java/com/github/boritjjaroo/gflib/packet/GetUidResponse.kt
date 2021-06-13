@@ -18,7 +18,7 @@ class GetUidResponse : GfResponsePacket() {
         if (isEncrypted(data)) {
             GfData.initSession()
 
-            val json: JsonObject = GfData.session.decryptGFData(data)
+            val json: JsonObject = GfData.session.decryptGFData(data) as JsonObject
             GfData.log.v("json :\n" + json.toString())
 
             GfData.session.sign = Sign(json["sign"].asString)

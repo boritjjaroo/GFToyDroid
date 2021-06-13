@@ -1,6 +1,7 @@
 package com.github.boritjjaroo.gflib.packet
 
 import com.github.boritjjaroo.gflib.data.GfData
+import com.google.gson.JsonObject
 
 class FriendUserCardResponse : GfResponsePacket() {
 
@@ -18,7 +19,7 @@ class FriendUserCardResponse : GfResponsePacket() {
 
         if (GfData.options.displayFriendInfo()) {
             if (isEncrypted(data)) {
-                val json = GfData.session.decryptGFData(data)
+                val json = GfData.session.decryptGFData(data) as JsonObject
                 val id = json.get("f_userid").asInt
                 val info = GfData.friends.get(id)
                 if (info != null) {

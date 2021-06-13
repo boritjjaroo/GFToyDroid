@@ -3,6 +3,7 @@ package com.github.boritjjaroo.gflib.packet
 import android.net.Uri
 import com.github.boritjjaroo.gflib.data.GfData
 import com.github.boritjjaroo.gflib.data.GfLog
+import com.google.gson.JsonObject
 
 class AdjutantRequest : GfRequestPacket() {
 
@@ -26,7 +27,7 @@ class AdjutantRequest : GfRequestPacket() {
                 // decrypt original data to find out timestamp value
                 val uri = Uri.parse("http://dummy.host/path?" + String(data))
                 val outdatacode = uri.getQueryParameter("outdatacode")
-                val json = GfData.session.decryptGFData(outdatacode!!.toByteArray())
+                val json = GfData.session.decryptGFData(outdatacode!!.toByteArray()) as JsonObject
                 val jsonString = json.get("adjutant_multi").asString
                 GfData.repository.putAdjutantMulti(jsonString)
                 GfData.log.i("Private adjutant info are saved.")

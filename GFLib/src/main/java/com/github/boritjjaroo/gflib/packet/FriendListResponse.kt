@@ -1,6 +1,7 @@
 package com.github.boritjjaroo.gflib.packet
 
 import com.github.boritjjaroo.gflib.data.GfData
+import com.google.gson.JsonObject
 
 class FriendListResponse : GfResponsePacket() {
 
@@ -13,7 +14,7 @@ class FriendListResponse : GfResponsePacket() {
 
         GfData.log.v("FriendListResponse:process()")
 
-        val json = GfData.session.decryptGFData(data)
+        val json = GfData.session.decryptGFData(data) as JsonObject
         //GFUtil.logV("json : \n${json.toString()}")
 
         GfData.friends.beginUpdate()

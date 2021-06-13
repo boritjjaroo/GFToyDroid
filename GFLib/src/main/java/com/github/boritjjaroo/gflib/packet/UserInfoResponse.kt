@@ -1,6 +1,7 @@
 package com.github.boritjjaroo.gflib.packet
 
 import com.github.boritjjaroo.gflib.data.GfData
+import com.google.gson.JsonObject
 
 class UserInfoResponse : GfResponsePacket() {
 
@@ -15,7 +16,7 @@ class UserInfoResponse : GfResponsePacket() {
 
         assert(isEncrypted(data))
         var modified = false
-        val json = GfData.session.decryptGFData(data)
+        val json = GfData.session.decryptGFData(data) as JsonObject
 
         //json.remove("item_with_user_info")
         //json.remove("equip_with_user_info")

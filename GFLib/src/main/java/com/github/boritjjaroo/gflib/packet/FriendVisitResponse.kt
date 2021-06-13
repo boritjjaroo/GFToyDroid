@@ -1,6 +1,7 @@
 package com.github.boritjjaroo.gflib.packet
 
 import com.github.boritjjaroo.gflib.data.GfData
+import com.google.gson.JsonObject
 
 class FriendVisitResponse : GfResponsePacket() {
 
@@ -13,7 +14,7 @@ class FriendVisitResponse : GfResponsePacket() {
 
         GfData.log.v("FriendVisitResponse:process()")
 
-        val json = GfData.session.decryptGFData(data)
+        val json = GfData.session.decryptGFData(data) as JsonObject
         //GfData.log.v("json : \n${json.toString()}")
 
         // Update dorm count info from battery count

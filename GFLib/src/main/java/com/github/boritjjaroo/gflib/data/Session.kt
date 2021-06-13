@@ -3,6 +3,7 @@ package com.github.boritjjaroo.gflib.data
 import com.github.boritjjaroo.gflib.encryption.GfEncryptionInputStream
 import com.github.boritjjaroo.gflib.encryption.GfEncryptionOutputStream
 import com.github.boritjjaroo.gflib.encryption.Sign
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.io.*
@@ -23,13 +24,13 @@ class Session() {
         reqId = "162098608400008"
     }
 
-    fun decryptGFData(gfData: ByteArray) : JsonObject {
+    fun decryptGFData(gfData: ByteArray) : JsonElement {
         return decryptGFData(gfData, this.sign)
     }
 
-    fun decryptGFData(gfData: ByteArray, sign: Sign) : JsonObject {
+    fun decryptGFData(gfData: ByteArray, sign: Sign) : JsonElement {
 
-        var data = JsonObject()
+        var data: JsonElement = JsonObject()
 
         // check if gfData's first is '#'
         var startIndex = 0
@@ -50,7 +51,7 @@ class Session() {
             val byteArrayInputStream = ByteArrayInputStream(gfDataPadded, startIndex, gfDataPadded.size - startIndex)
             val inputStream = GfEncryptionInputStream(byteArrayInputStream, sign)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8))
-            data = JsonParser.parseReader(bufferedReader) as JsonObject
+            data = JsonParser.parseReader(bufferedReader)
             this.date = inputStream.date
         } catch (e: Exception) {
             GfData.log.w("Session::decryptGFData() failed")

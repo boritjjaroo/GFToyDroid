@@ -3,6 +3,7 @@ package com.github.boritjjaroo.gflib.packet
 import android.net.Uri
 import com.github.boritjjaroo.gflib.data.GfData
 import com.github.boritjjaroo.gflib.data.GfLog
+import com.google.gson.JsonObject
 
 class ChangeSkinRequest : GfRequestPacket() {
     companion object {
@@ -26,7 +27,7 @@ class ChangeSkinRequest : GfRequestPacket() {
                 val uri = Uri.parse("http://dummy.host/path?" + String(data))
                 val outdatacode = uri.getQueryParameter("outdatacode")
                 // {"gun_with_user_id":329900471,"skin_id":0}
-                val json = GfData.session.decryptGFData(outdatacode!!.toByteArray())
+                val json = GfData.session.decryptGFData(outdatacode!!.toByteArray()) as JsonObject
                 val gunId = json.get("gun_with_user_id").asInt
                 val skinId = json.get("skin_id").asInt
                 GfData.gun.replaceGunSkinAndSave(gunId, skinId)
